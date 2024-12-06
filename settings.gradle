@@ -1,0 +1,4 @@
+rootProject.name = 'momentia'
+include("momentia-api")
+include("momentia-batch")
+include("momentia-common")
