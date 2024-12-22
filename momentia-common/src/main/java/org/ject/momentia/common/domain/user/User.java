@@ -7,10 +7,17 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Table(
 	name = "user",
 	schema = "momentia",
@@ -56,5 +63,4 @@ public class User {
 	@Size(max = 320)
 	@Column(name = "email", length = 320)
 	private String email;
-
 }
