@@ -11,9 +11,9 @@ import org.ject.momentia.api.user.model.NormalLoginRequest;
 import org.ject.momentia.api.user.model.NormalRegisterRequest;
 import org.ject.momentia.api.user.model.RefreshTokenRequest;
 import org.ject.momentia.api.user.model.SocialLoginResponse;
-import org.ject.momentia.common.domain.user.type.OAuthProvider;
 import org.ject.momentia.api.user.repository.NormalAccountRepository;
 import org.ject.momentia.api.user.repository.UserRepository;
+import org.ject.momentia.common.domain.user.type.OAuthProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,7 +61,7 @@ public class AccountService {
 		var encodedPassword = passwordEncoder.encode(registerRequest.password());
 		var user = UserConverter.registerRequestOf(registerRequest);
 
-		var insertedUser = userRepository.save(user);
+		var insertedUser = userRepository.saveAndFlush(user);
 		var normalAccountInfo = NormalAccountConverter.userOf(insertedUser, encodedPassword);
 		normalAccountRepository.save(normalAccountInfo);
 
@@ -75,12 +75,12 @@ public class AccountService {
 
 	public AuthorizationToken normalLogin(NormalLoginRequest normalLoginRequest) {
 		var password = normalLoginRequest.password();
-
-		var encodedPassword = passwordEncoder.encode(password);
 		var user = userRepository.findByEmail(normalLoginRequest.email())
 			.orElseThrow(ErrorCd.NOT_AUTHORIZED::serviceException);
+		var normalAccount = normalAccountRepository.findById(user.getId())
+			.orElseThrow(ErrorCd.NOT_AUTHORIZED::serviceException);
 
-		if (!normalAccountRepository.existsByIdAndPassword(user, encodedPassword)) {
+		if (!passwordEncoder.matches(password, normalAccount.getPassword())) {
 			throw ErrorCd.NOT_AUTHORIZED.serviceException();
 		}
 

@@ -1,7 +1,14 @@
 package org.ject.momentia.common.domain.user;
 
+import org.ject.momentia.common.domain.user.type.AccountStatus;
+import org.ject.momentia.common.domain.user.type.AccountType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
@@ -28,6 +35,7 @@ import lombok.NoArgsConstructor;
 public class User {
 	@Id
 	@Column(name = "id", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Size(max = 50)
@@ -50,17 +58,21 @@ public class User {
 	@Column(name = "following_count", nullable = false)
 	private Integer followingCount;
 
-	@Size(max = 10)
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	@Column(name = "account_type", nullable = false, length = 10)
-	private String accountType;
+	private AccountType accountType;
 
-	@Size(max = 10)
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	@Column(name = "account_status", nullable = false, length = 10)
-	private String accountStatus;
+	private AccountStatus accountStatus;
 
 	@Size(max = 320)
 	@Column(name = "email", length = 320)
 	private String email;
+
+	public boolean matchAccountType(AccountType accountType) {
+		return this.accountType == accountType;
+	}
 }

@@ -29,11 +29,11 @@ public enum ErrorCd {
 	private final String errorMessage;
 
 	public ServiceException serviceException() {
-		throw new ServiceException(this.httpStatus.name(), this.errorMessage);
+		throw new ServiceException(this.name(), this.errorMessage);
 	}
 
 	public ServiceException serviceException(String debugMessage) {
-		throw new ServiceException(this.httpStatus.name(), this.errorMessage, debugMessage);
+		throw new ServiceException(this.name(), this.errorMessage, debugMessage);
 	}
 }
 

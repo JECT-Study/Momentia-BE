@@ -1,7 +1,8 @@
-package org.ject.momentia.api.exception;
+package org.ject.momentia.api.mvc.handler;
 
 import java.util.Objects;
 
+import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.common.exception.ServiceException;
 import org.ject.momentia.common.util.MomentiaStringUtils;
 import org.springframework.beans.ConversionNotSupportedException;
@@ -126,6 +127,7 @@ public class ExceptionHandlerAdvice {
 	 */
 	@ExceptionHandler({Exception.class})
 	public ResponseEntity<Response> exception(HttpServletRequest req, Exception e) {
+		log.error("Internal Server Error - exception:", e);
 		return handle(req, e, ErrorCd.INTERNAL_SERVER_ERROR, null);
 	}
 
