@@ -125,4 +125,11 @@ public class JwtTokenProvider {
 
 		return new UsernamePasswordAuthenticationToken(principal, token);
 	}
+
+	public Long parseAccessToken(String token) {
+		var claims = jwtParser.parseSignedClaims(token)
+			.getPayload();
+
+		return claims.get("id", Long.class);
+	}
 }
