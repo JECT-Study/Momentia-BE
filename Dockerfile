@@ -1,11 +1,11 @@
 # Build stage
-FROM gradle:8.5-jdk17 AS build
+FROM gradle:8.5-jdk21 AS build
 WORKDIR /app
 COPY . .
 RUN gradle build --no-daemon
 
 # Run stage
-FROM openjdk:17-slim
+FROM openjdk:21-slim
 WORKDIR /app
 
 # Copy the built jar from build stage

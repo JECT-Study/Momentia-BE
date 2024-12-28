@@ -2,7 +2,7 @@ name: Build And Deploy to Server
 
 on:
   push:
-    branches: [ main ]
+    branches: [ feature/VSFe_test ]
   workflow_dispatch:
     inputs:
       deploy_target:
@@ -51,14 +51,14 @@ jobs:
         with:
           host: ${{ secrets.SANDBOX_SERVER_HOST }}
           username: ${{ secrets.SANDBOX_SERVER_USERNAME }}
-          key: ${{ secrets.SANDBOX_SERVER_SSH_KEY }}
+          password: ${{ secrets.SANDBOX_SERVER_PASSWORD }}
           port: ${{ secrets.SANDBOX_SERVER_PORT }}
           script: |
             docker pull ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
-            docker stop momentia-app-container-sandbox || true
-            docker rm momentia-app-container-sandbox || true
+            docker stop momentia-api-container-sandbox || true
+            docker rm momentia-api-container-sandbox || true
             docker run -d \
-              --name app-container-a \
+              --name momentia-api-container-sandbox \
               -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=dev \
               ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
@@ -77,10 +77,10 @@ jobs:
           port: ${{ secrets.ALPHA_SERVER_PORT }}
           script: |
             docker pull ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
-            docker stop momentia-container-alpha || true
-            docker rm momentia-container-alpha || true
+            docker stop momentia-api-container-alpha || true
+            docker rm momentia-api-container-alpha || true
             docker run -d \
-              --name momentia-container-alpha \
+              --name momentia-api-container-alpha \
               -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=dev \
               ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
@@ -99,10 +99,10 @@ jobs:
           port: ${{ secrets.REAL_SERVER_PORT }}
           script: |
             docker pull ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
-            docker stop momentia-container-real || true
-            docker rm momentia-container-real || true
+            docker stop momentia-api-container-real || true
+            docker rm momentia-api-container-real || true
             docker run -d \
-              --name momentia-container-real \
+              --name momentia-api-container-real \
               -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=real \
               ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
