@@ -1,0 +1,108 @@
+name: Build And Deploy to Server
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'Deploy target server'
+        required: true
+        default: 'alpha'
+        type: choice
+        options:
+          - alpha
+          - real
+
+env:
+  DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/app-name
+  VERSION: ${{ github.sha }}
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }},${{ env.DOCKER_IMAGE }}:latest
+
+  deploy-server-sandbox:
+    needs: build-and-push
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Sandbox Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SANDBOX_SERVER_HOST }}
+          username: ${{ secrets.SANDBOX_SERVER_USERNAME }}
+          key: ${{ secrets.SANDBOX_SERVER_SSH_KEY }}
+          port: ${{ secrets.SANDBOX_SERVER_PORT }}
+          script: |
+            docker pull ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
+            docker stop momentia-app-container-sandbox || true
+            docker rm momentia-app-container-sandbox || true
+            docker run -d \
+              --name app-container-a \
+              -p 8080:8080 \
+              -e SPRING_PROFILES_ACTIVE=dev \
+              ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
+
+  deploy-server-alpha:
+    needs: build-and-push
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_target == 'alpha'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Alpha Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ALPHA_SERVER_HOST }}
+          username: ${{ secrets.ALPHA_SERVER_USERNAME }}
+          key: ${{ secrets.ALPHA_SERVER_SSH_KEY }}
+          port: ${{ secrets.ALPHA_SERVER_PORT }}
+          script: |
+            docker pull ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
+            docker stop momentia-container-alpha || true
+            docker rm momentia-container-alpha || true
+            docker run -d \
+              --name momentia-container-alpha \
+              -p 8080:8080 \
+              -e SPRING_PROFILES_ACTIVE=dev \
+              ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
+
+  deploy-server-real:
+    needs: build-and-push
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_target == 'real'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Real Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REAL_SERVER_HOST }}
+          username: ${{ secrets.REAL_SERVER_USERNAME }}
+          key: ${{ secrets.REAL_SERVER_SSH_KEY }}
+          port: ${{ secrets.REAL_SERVER_PORT }}
+          script: |
+            docker pull ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
+            docker stop momentia-container-real || true
+            docker rm momentia-container-real || true
+            docker run -d \
+              --name momentia-container-real \
+              -p 8080:8080 \
+              -e SPRING_PROFILES_ACTIVE=real \
+              ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
