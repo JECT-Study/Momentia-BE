@@ -1,7 +1,7 @@
 package org.ject.momentia.api.image.converter;
 
 import org.ject.momentia.common.domain.image.Image;
-import org.ject.momentia.api.image.entity.TempImage;
+import org.ject.momentia.common.domain.image.TempImage;
 import org.ject.momentia.common.domain.image.type.ImageTargetType;
 
 import lombok.AccessLevel;
@@ -14,7 +14,7 @@ public class ImageConverter {
 			.id(tempImage.getId())
 			.targetType(imageTargetType)
 			.targetId(targetId)
-			.imageSrc(tempImage.getPresignedUrl())
+			.imageSrc(tempImage.getPresignedGetUrl())
 			.build();
 	}
 }

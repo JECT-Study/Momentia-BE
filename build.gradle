@@ -62,7 +62,7 @@ subprojects {
 		implementation 'commons-beanutils:commons-beanutils:1.9.4'
 
 		// AWS
-		implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
+		implementation 'software.amazon.awssdk:s3:2.19.1'
 
 		// Test
 		testImplementation 'org.springframework.boot:spring-boot-starter-test'

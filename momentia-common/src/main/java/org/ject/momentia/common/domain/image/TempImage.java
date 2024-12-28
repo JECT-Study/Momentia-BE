@@ -1,7 +1,7 @@
-package org.ject.momentia.api.image.entity;
+package org.ject.momentia.common.domain.image;
 
-import org.ject.momentia.api.image.model.type.ImageStatus;
 import org.ject.momentia.common.domain.base.BaseEntity;
+import org.ject.momentia.common.domain.image.type.ImageStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,10 +31,15 @@ public class TempImage extends BaseEntity {
 	@Column(name = "image_id", nullable = false)
 	private Long id;
 
-	@Size(max = 150)
+	@Size(max = 1000)
 	@NotNull
-	@Column(name = "presigned_url", nullable = false, length = 150)
-	private String presignedUrl;
+	@Column(name = "presigned_put_url", nullable = false, length = 1000)
+	private String presignedPutUrl;
+
+	@Size(max = 1000)
+	@NotNull
+	@Column(name = "presigned_get_url", nullable = false, length = 1000)
+	private String presignedGetUrl;
 
 	@NotNull
 	@Column(name = "status", nullable = false, length = 10)

@@ -31,7 +31,7 @@ public class ImageService {
 		var tempImage = TempImageConverter.presignedOf(presignedUrl);
 
 		tempImageRepository.save(tempImage);
-		return new StartUploadResponse(tempImage.getId(), presignedUrl);
+		return new StartUploadResponse(tempImage.getId(), presignedUrl.getLeft());
 	}
 
 	@Transactional
