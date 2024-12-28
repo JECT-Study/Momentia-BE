@@ -25,6 +25,7 @@ public enum ErrorCd {
 	DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "Duplicate Nickname"),
 	DUPLICATE_EMAIL(HttpStatus.CONFLICT, "Duplicate Email"),
 
+
 	// Artwork Error
 	ARTWORK_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "artwork post not found"),
 	ARTWORK_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "artwork comment not found"),
@@ -36,7 +37,13 @@ public enum ErrorCd {
 	DUPLICATE_COLLECTION_NAME(HttpStatus.CONFLICT,"duplicate collection name"),
 	COLLECTION_NOT_FOUND(HttpStatus.NOT_FOUND,  "collection not found"),
 	DUPLICATE_COLLECTION_ARTWORK(HttpStatus.CONFLICT,"duplicate artwork"),
-	COLLECTION_ARTWORK_ALREADY_REMOVED(HttpStatus.CONFLICT, "already removed or not exist");
+	COLLECTION_ARTWORK_ALREADY_REMOVED(HttpStatus.CONFLICT, "already removed or not exist"),
+
+	// Image Error
+	IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "image not found"),
+	IMAGE_ALREADY_PROCESSED(HttpStatus.CONFLICT, "Image already processed"),
+	IMAGE_NOT_UPLOADED(HttpStatus.BAD_REQUEST, "image not uploaded");
+
 
 	private final HttpStatus httpStatus;
 	private final String errorMessage;
