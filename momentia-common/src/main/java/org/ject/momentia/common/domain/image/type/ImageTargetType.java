@@ -1,4 +1,4 @@
-package org.ject.momentia.api.image.model.type;
+package org.ject.momentia.common.domain.image.type;
 
 public enum ImageTargetType {
 	ARTWORK,

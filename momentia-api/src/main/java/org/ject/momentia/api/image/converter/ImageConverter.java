@@ -1,8 +1,8 @@
 package org.ject.momentia.api.image.converter;
 
-import org.ject.momentia.api.image.entity.Image;
+import org.ject.momentia.common.domain.image.Image;
 import org.ject.momentia.api.image.entity.TempImage;
-import org.ject.momentia.api.image.model.type.ImageTargetType;
+import org.ject.momentia.common.domain.image.type.ImageTargetType;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
