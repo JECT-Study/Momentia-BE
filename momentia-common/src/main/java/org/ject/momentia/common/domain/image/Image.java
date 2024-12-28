@@ -1,7 +1,7 @@
-package org.ject.momentia.api.image.entity;
+package org.ject.momentia.common.domain.image;
 
-import org.ject.momentia.api.image.model.type.ImageTargetType;
 import org.ject.momentia.common.domain.base.BaseEntity;
+import org.ject.momentia.common.domain.image.type.ImageTargetType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

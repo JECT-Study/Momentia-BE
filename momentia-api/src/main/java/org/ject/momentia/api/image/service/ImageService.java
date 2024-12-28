@@ -8,7 +8,7 @@ import org.ject.momentia.api.image.converter.TempImageConverter;
 import org.ject.momentia.api.image.infra.S3Resolver;
 import org.ject.momentia.api.image.model.StartUploadRequest;
 import org.ject.momentia.api.image.model.StartUploadResponse;
-import org.ject.momentia.api.image.model.type.ImageTargetType;
+import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.ject.momentia.api.image.repository.ImageRepository;
 import org.ject.momentia.api.image.repository.TempImageRepository;
 import org.springframework.stereotype.Service;
