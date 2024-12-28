@@ -2,7 +2,7 @@ name: Build And Deploy to Server
 
 on:
   push:
-    branches: [ main ]
+    branches: [ feature/VSFe_test ]
   workflow_dispatch:
     inputs:
       deploy_target:
