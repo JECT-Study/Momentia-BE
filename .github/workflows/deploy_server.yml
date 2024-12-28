@@ -51,7 +51,7 @@ jobs:
         with:
           host: ${{ secrets.SANDBOX_SERVER_HOST }}
           username: ${{ secrets.SANDBOX_SERVER_USERNAME }}
-          key: ${{ secrets.SANDBOX_SERVER_SSH_KEY }}
+          password: ${{ secrets.SANDBOX_SERVER_PASSWORD }}
           port: ${{ secrets.SANDBOX_SERVER_PORT }}
           script: |
             docker pull ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
