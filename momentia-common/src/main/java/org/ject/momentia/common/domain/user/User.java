@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.ject.momentia.common.domain.user.type.FieldType;
 
 @Getter
 @Entity
@@ -71,6 +72,12 @@ public class User {
 	@Size(max = 320)
 	@Column(name = "email", length = 320)
 	private String email;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name = "field", nullable = true, length = 20)
+	private FieldType field;
+
 
 	public boolean matchAccountType(AccountType accountType) {
 		return this.accountType == accountType;

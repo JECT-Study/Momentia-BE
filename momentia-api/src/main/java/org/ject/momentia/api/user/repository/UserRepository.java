@@ -1,5 +1,7 @@
 package org.ject.momentia.api.user.repository;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.ject.momentia.common.domain.user.User;
@@ -13,4 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	boolean existsByNickname(String nickname);
 
 	Optional<User> findByEmail(String email);
+
+	List<User> findAllByIdIn(Collection<Long> id);
 }

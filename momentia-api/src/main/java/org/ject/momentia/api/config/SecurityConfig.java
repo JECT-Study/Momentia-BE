@@ -53,7 +53,8 @@ public class SecurityConfig {
 		// 경로별 인가 설정
 		http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
 			.requestMatchers(SecurityConstants.ALLOW_URLS.toArray(new String[0])).permitAll()
-			.anyRequest()
+				.requestMatchers("/v1/**").permitAll()
+				.anyRequest()
 			.authenticated()
 		);
 
