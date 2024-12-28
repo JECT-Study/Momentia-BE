@@ -1,11 +1,12 @@
 package org.ject.momentia.api.user.model;
 
+import org.ject.momentia.common.util.CommonConstants;
+
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 public record NormalLoginRequest(
 	@Email String email,
-	@NotEmpty @Size(min = 6) String password
+	@Pattern(regexp = CommonConstants.PASSWORD_FORMAT) String password
 ) {
 }

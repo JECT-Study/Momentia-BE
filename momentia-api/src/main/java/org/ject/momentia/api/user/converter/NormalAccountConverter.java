@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class NormalAccountConverter {
 	public static NormalAccount userOf(User user, String encodedPassword) {
-		return new NormalAccount(user, encodedPassword);
+		return new NormalAccount(null, user, encodedPassword);
 	}
 }

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,9 +18,9 @@ public class KakaoClient {
 	private static final String AUTHORIZATION_HEADER_FORMAT = "Bearer {}";
 	private final RestClient restClient = RestClient.create("https://kapi.kakao.com");
 
-	@Value(("${api-client.kakao.client-id}"))
+	@Value("${api-client.kakao.client-id}")
 	private String clientId;
-	@Value(("${api-client.kakao.redirect-uri}"))
+	@Value("${api-client.kakao.redirect-uri}")
 	private String redirectUri;
 
 	/**

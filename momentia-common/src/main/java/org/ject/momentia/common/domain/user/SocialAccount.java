@@ -8,6 +8,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -27,8 +28,12 @@ import lombok.NoArgsConstructor;
 )
 public class SocialAccount {
 	@Id
-	@JoinColumn(name = "user_id", nullable = false)
+	@Column(name = "user_id", nullable = false)
+	private Long id;
+
+	@MapsId
 	@OneToOne
+	@JoinColumn(name = "user_id")
 	private User user;
 
 	@Size(max = 50)
@@ -36,7 +41,6 @@ public class SocialAccount {
 	@Column(name = "social_id", nullable = false, length = 50)
 	private String socialId;
 
-	@Size(max = 10)
 	@NotNull
 	@Column(name = "social_type", nullable = false, length = 10)
 	@Enumerated(EnumType.STRING)

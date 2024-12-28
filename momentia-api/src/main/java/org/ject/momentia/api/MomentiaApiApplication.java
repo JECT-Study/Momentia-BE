@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackages = {"org.ject.momentia.common.domain"})
+@EnableJpaRepositories(basePackages = {"org.ject.momentia.api"})
 @EntityScan(basePackages = {"org.ject.momentia.common.domain"})
 public class MomentiaApiApplication {
 	public static void main(String[] args) {
