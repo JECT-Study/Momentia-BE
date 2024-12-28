@@ -1,4 +1,29 @@
 spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MOMENTIA_ENV_DATASOURCE_URL}
+    username: ${MOMENTIA_ENV_DATASOURCE_USERNAME}
+    password: ${MOMENTIA_ENV_DATASOURCE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: none
+
+api-client:
+  kakao:
+    client-id: ${MOMENTIA_ENV_KAKAO_CLIENT_ID}
+    redirect-uri: ${MOMENTIA_ENV_KAKAO_REDIRECT_URI}
+
+jwt:
+  secret: ${MOMENTIA_ENV_JWT_SECRET}
+  access-token-validity-in-seconds: ${MOMENTIA_ENV_ACCESS_TOKEN_VALIDITY}
+  refresh-token-validity-in-seconds: ${MOMENTIA_ENV_REFRESH_TOKEN_VALIDITY}
+
+cors:
+  allow-origin: ${MOMENTIA_ENV_CORS_ALLOW_ORIGINS}
+
+s3:
+  region: ${MOMENTIA_ENV_S3_REGION}
+  endpoint: ${MOMENTIA_ENV_S3_ENDPOINT}
+  access-key: ${MOMENTIA_ENV_S3_ACCESS_KEY}
+  secret-key: ${MOMENTIA_ENV_S3_SECRET_KEY}
+  bucket-name: ${MOMENTIA_ENV_S3_BUCKET_NAME}

@@ -73,7 +73,6 @@ public class User {
 	@Column(name = "email", length = 320)
 	private String email;
 
-	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "field", nullable = true, length = 20)
 	private FieldType field;
