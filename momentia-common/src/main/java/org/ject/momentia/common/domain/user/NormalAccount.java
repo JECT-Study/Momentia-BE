@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -24,13 +25,16 @@ import lombok.Setter;
 )
 public class NormalAccount {
 	@Id
-	@JoinColumn(name = "user_id", nullable = false)
+	@Column(name = "user_id", nullable = false)
+	private Long id;
+
+	@MapsId
 	@OneToOne
-	private User id;
+	@JoinColumn(name = "user_id")
+	private User user;
 
-	@Size(max = 50)
+	@Size(max = 100)
 	@NotNull
-	@Column(name = "password", nullable = false, length = 50)
+	@Column(name = "password", nullable = false, length = 100)
 	private String password;
-
 }
