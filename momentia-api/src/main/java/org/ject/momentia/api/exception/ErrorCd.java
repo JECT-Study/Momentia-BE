@@ -23,7 +23,20 @@ public enum ErrorCd {
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "user not found"),
 	INVALID_NICKNAME(HttpStatus.BAD_REQUEST, "Invalid Nickname"),
 	DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "Duplicate Nickname"),
-	DUPLICATE_EMAIL(HttpStatus.CONFLICT, "Duplicate Email");
+	DUPLICATE_EMAIL(HttpStatus.CONFLICT, "Duplicate Email"),
+
+	// Artwork Error
+	ARTWORK_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "artwork post not found"),
+	ARTWORK_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "artwork comment not found"),
+
+	ALREADY_lIKE(HttpStatus.CONFLICT, "already like"),
+	LIKE_ALREADY_REMOVED(HttpStatus.CONFLICT, "already removed or not exist"),
+
+	// collection Error
+	DUPLICATE_COLLECTION_NAME(HttpStatus.CONFLICT,"duplicate collection name"),
+	COLLECTION_NOT_FOUND(HttpStatus.NOT_FOUND,  "collection not found"),
+	DUPLICATE_COLLECTION_ARTWORK(HttpStatus.CONFLICT,"duplicate artwork"),
+	COLLECTION_ARTWORK_ALREADY_REMOVED(HttpStatus.CONFLICT, "already removed or not exist");
 
 	private final HttpStatus httpStatus;
 	private final String errorMessage;

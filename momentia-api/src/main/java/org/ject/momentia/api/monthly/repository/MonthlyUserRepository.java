@@ -1,0 +1,13 @@
+package org.ject.momentia.api.monthly.repository;
+
+import jakarta.validation.constraints.NotNull;
+import org.ject.momentia.common.domain.monthly.MonthlyUser;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface MonthlyUserRepository extends JpaRepository<MonthlyUser, Long> {
+    List<MonthlyUser> findAllByMonthAndYearOrderByRankAsc(@NotNull Integer month, @NotNull Integer year);
+}
