@@ -5,6 +5,7 @@ import org.ject.momentia.api.mvc.handler.JwtAccessDeniedHandler;
 import org.ject.momentia.api.user.infra.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -53,7 +54,7 @@ public class SecurityConfig {
 		// 경로별 인가 설정
 		http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
 			.requestMatchers(SecurityConstants.ALLOW_URLS.toArray(new String[0])).permitAll()
-				.requestMatchers("/v1/**").permitAll()
+				.requestMatchers(HttpMethod.GET,"/v1/**").permitAll()
 				.anyRequest()
 			.authenticated()
 		);

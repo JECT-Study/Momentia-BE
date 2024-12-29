@@ -118,12 +118,13 @@ public class JwtTokenProvider {
 	public Authentication getAuthentication(String token) {
 		var claims = jwtParser.parseSignedClaims(token)
 			.getPayload();
-
 		var userId = claims.get("id", Long.class);
+
 		var user = userRepository.findById(userId).orElseThrow(ErrorCd.NOT_AUTHORIZED::serviceException);
 		var principal = CustomUserDetails.from(user);
 
-		return new UsernamePasswordAuthenticationToken(principal, token);
+		return new UsernamePasswordAuthenticationToken(principal,token,principal.getAuthorities());
+		// 기존 코드 -> return new UsernamePasswordAuthenticationToken(principal, token);
 	}
 
 	public Long parseAccessToken(String token) {

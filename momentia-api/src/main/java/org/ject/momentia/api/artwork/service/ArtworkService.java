@@ -1,8 +1,11 @@
 package org.ject.momentia.api.artwork.service;
 
 import jakarta.persistence.Convert;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.ject.momentia.api.artwork.converter.ArtworkPostConverter;
+import org.ject.momentia.api.collection.service.CollectionArtworkService;
+import org.ject.momentia.api.follow.service.FollowService;
 import org.ject.momentia.api.global.pagination.converter.PaginationConverter;
 import org.ject.momentia.api.artwork.model.*;
 import org.ject.momentia.api.global.pagination.model.PaginationModel;
@@ -12,10 +15,12 @@ import org.ject.momentia.api.artwork.repository.ArtworkLikeRepository;
 import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
 import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.api.follow.repository.FollowRepository;
+import org.ject.momentia.api.image.service.ImageService;
 import org.ject.momentia.common.domain.artwork.ArtworkLikeId;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.artwork.type.ArtworkPostStatus;
 import org.ject.momentia.common.domain.artwork.type.Category;
+import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,42 +37,55 @@ public class ArtworkService {
 
     private final ArtworkPostRepository artworkPostRepository;
     private final ArtworkLikeRepository artworkLikeRepository;
-
     private final FollowRepository followRepository;
+
+    private final ImageService imageService;
+    private final CollectionArtworkService collectionArtworkService;
+    private final FollowService followService;
     private final ArtworkCommentRepository artworkCommentRepository;
+    private final ArtworkLikeService artworkLikeService;
 
+    @Transactional
     public ArtworkPostIdResponse createPost(User user, ArtworkPostCreateRequest artworkPostCreateRequest) {
-        ArtworkPost artworkPost = ArtworkPostConverter.toArtworPost(artworkPostCreateRequest, user);
+        ArtworkPost artworkPost = ArtworkPostConverter.toArtworkPost(artworkPostCreateRequest, user);
 
-        /// Todo : image 처리
         artworkPost = artworkPostRepository.save(artworkPost);
+
+        imageService.useImageToService(artworkPostCreateRequest.postImage(), ImageTargetType.ARTWORK,artworkPost.getId());
 
         return ArtworkPostConverter.toArtworkPostIdResponse(artworkPost);
     }
 
     public ArtworkPostResponse getPost(User user, Long postId) {
-        ArtworkPost artworkPost = artworkPostRepository.findById(postId).orElseThrow(ErrorCd.ARTWORK_POST_NOT_FOUND::serviceException);
-
-        boolean isMine = false;
-        boolean isLiked = false;
-        if (user != null) {
-            Long userId = user.getId();
-            isLiked = artworkLikeRepository.existsById(new ArtworkLikeId(user, artworkPost));
-            isMine = userId.equals(artworkPost.getUser().getId());
-        }
-
-        ///  Todo : imageId -> url 로 변환
         ///  Todo : 조회수 처리
 
-        return ArtworkPostConverter.toArtworkPostResponse(artworkPost, isMine, isLiked, "empty");
+        ArtworkPost artworkPost = artworkPostRepository.findById(postId).orElseThrow(ErrorCd.ARTWORK_POST_NOT_FOUND::serviceException);
+
+        boolean isMine = user != null && Objects.equals(user.getId(), artworkPost.getUser().getId());
+        boolean isLiked = user != null && artworkLikeRepository.existsById(new ArtworkLikeId(user, artworkPost));
+        boolean isFollow = user != null && followService.isFollowing(user, artworkPost.getUser());
+
+        String postImage = imageService.getImageUrl(ImageTargetType.ARTWORK,artworkPost.getId());
+        String profileImage = artworkPost.getUser().getProfileImage() != null ? imageService.getImageUrl(ImageTargetType.PROFILE,artworkPost.getUser().getId()) : null;
+
+        return ArtworkPostConverter.toArtworkPostResponse(artworkPost, isMine, isLiked, postImage,isFollow,profileImage);
     }
 
+    @Transactional
     public void deletePost(User user, Long postId) {
         ArtworkPost artworkPost = artworkPostRepository.findById(postId).orElseThrow(ErrorCd.ARTWORK_POST_NOT_FOUND::serviceException);
         if (user != null && user.getId() != artworkPost.getUser().getId()) ErrorCd.NO_PERMISSION.serviceException();
+
         artworkPostRepository.delete(artworkPost);
+
+        /// todo : (일단 이달의 작품에서는 삭제하지 않음 -> 동작에 일단 이상 x)
+        collectionArtworkService.deleteAllArtworksInCollection(artworkPost);
+        artworkCommentRepository.deleteAllByPost(artworkPost);
+        artworkLikeRepository.deleteAllByArtwork(artworkPost);
+
     }
 
+    @Transactional
     public void updatePost(User user, Long postId, ArtworkPostUpdateRequest updateRequest) {
         ArtworkPost artworkPost = artworkPostRepository.findById(postId).orElseThrow(ErrorCd.ARTWORK_POST_NOT_FOUND::serviceException);
         if (user == null || artworkPost.getUser().getId() != user.getId()) ErrorCd.NO_PERMISSION.serviceException();
@@ -88,8 +106,9 @@ public class ArtworkService {
 
         List<ArtworkPostModel> postModelList = posts.getContent().stream()
                 .map((p) -> {
-                            Boolean isLiked = user != null && artworkLikeRepository.existsById(new ArtworkLikeId(user, p));
-                            return ArtworkPostConverter.toArtworkPostModel(p, isLiked, "empty");
+                            String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK, p.getId());
+                            Boolean isLiked = isLiked(user, p);
+                            return ArtworkPostConverter.toArtworkPostModel(p, isLiked, imageUrl);
                         }
                 )
                 .toList();
@@ -105,11 +124,12 @@ public class ArtworkService {
     public ArtworkFolloingUserPostsResponse getFollowingUserPosts(User user) {
         if (user == null) throw ErrorCd.NO_PERMISSION.serviceException();
         List<User> userList = followRepository.findFollowingUsers(user);
-        List<ArtworkPost> posts = artworkPostRepository.findAllByUserInOrderByCreatedAtDesc(userList);
+        List<ArtworkPost> posts = artworkPostRepository.findAllByStatusAndUserInOrderByCreatedAtDesc(ArtworkPostStatus.PUBLIC,userList);
 
         List<FollowingUserModel> userModelList = userList.stream().map((u) -> {
-            /// todo : 이미지 처리
-            return ArtworkPostConverter.toFollowingUserModel(u, "empty");
+            String imageUrl = null;
+            if(u.getProfileImage()!=null) imageUrl = imageService.getImageUrl(ImageTargetType.PROFILE,u.getId());
+            return ArtworkPostConverter.toFollowingUserModel(u, imageUrl);
         }).collect(Collectors.toList());
 
         Iterator<FollowingUserModel> iterator = userModelList.iterator();
@@ -120,8 +140,9 @@ public class ArtworkService {
             for (int i = 0; i < posts.size(); i++) {
                 ArtworkPost post = posts.get(i);
                 if (post.getUser().getId() == u.getUserId()) {
-                    // todo : 이미지 처리
-                    u.getPosts().add(ArtworkPostConverter.toArtworkFollowingUserPostModel(post,"empty"));
+                    String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK,post.getId());
+                    Boolean isLiked = isLiked(user, post);
+                    u.getPosts().add(ArtworkPostConverter.toArtworkFollowingUserPostModel(post,imageUrl,isLiked));
                     count++;
                     if (count == 2) {
                         break;

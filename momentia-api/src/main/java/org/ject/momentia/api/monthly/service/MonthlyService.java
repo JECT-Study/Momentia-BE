@@ -7,6 +7,7 @@ import org.ject.momentia.api.artwork.model.ArtworkPostModel;
 import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
 import org.ject.momentia.api.artwork.service.ArtworkService;
 import org.ject.momentia.api.follow.service.FollowService;
+import org.ject.momentia.api.image.service.ImageService;
 import org.ject.momentia.api.monthly.converter.MonthlyUserConverter;
 import org.ject.momentia.api.monthly.model.MonthlyPostsResponse;
 import org.ject.momentia.api.monthly.model.MonthlyUsersResponse;
@@ -16,6 +17,7 @@ import org.ject.momentia.api.monthly.repository.MonthlyUserRepository;
 import org.ject.momentia.api.user.repository.UserRepository;
 import org.ject.momentia.common.domain.artwork.ArtworkLikeId;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
+import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.ject.momentia.common.domain.monthly.MonthlyArtwork;
 import org.ject.momentia.common.domain.monthly.MonthlyUser;
 import org.ject.momentia.common.domain.user.User;
@@ -36,7 +38,7 @@ public class MonthlyService {
 
     private final ArtworkService artworkService;
     private final FollowService followService;
-
+    private final ImageService imageService;
 
     public MonthlyPostsResponse getMonthlyPosts(User user) {
         List<MonthlyArtwork> artworkList = monthlyPostRepository.findAllByMonthAndYearOrderByRankAsc(12, 2024);
@@ -55,8 +57,8 @@ public class MonthlyService {
                 .map((p) -> {
                             ArtworkPost post = idToPostMap.get(p.getPost().getId());
                             Boolean isLiked = user != null && artworkService.isLiked(user, post);
-                            ///  todo : 이미지 처리
-                            return ArtworkPostConverter.toArtworkPostModel(post, isLiked, "empty");
+                            String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK,post.getId());
+                            return ArtworkPostConverter.toArtworkPostModel(post, isLiked, imageUrl);
                         }
                 )
                 .toList();
@@ -82,15 +84,18 @@ public class MonthlyService {
             // 대표작
             ArtworkPost artwork = artworkService.getPopularArtworkByUser(u);
 
-            // 대표작 이미지
+            /// todo: 대표작 이미지
+            String postImage = imageService.getImageUrl(ImageTargetType.ARTWORK,artwork.getId());
 
-            // 프로필 이미지
+            // todo : 프로필 이미지
+            String profileImage = u.getProfileImage()!=null ? imageService.getImageUrl(ImageTargetType.PROFILE,u.getId()) : null;
 
             // 좋아요 여부
             Boolean isFollow = followService.isFollowing(user, u);
 
-            return MonthlyUserConverter.toUserListModel(u, "empty", "empty", isFollow);
+            return MonthlyUserConverter.toUserListModel(u, profileImage, postImage, isFollow);
         }).toList();
         return new MonthlyUsersResponse(userListModels);
     }
+
 }

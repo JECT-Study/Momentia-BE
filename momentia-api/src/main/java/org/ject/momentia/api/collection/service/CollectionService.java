@@ -10,11 +10,13 @@ import org.ject.momentia.api.collection.model.*;
 import org.ject.momentia.api.collection.repository.CollectionArtworkRepository;
 import org.ject.momentia.api.collection.repository.CollectionRepository;
 import org.ject.momentia.api.exception.ErrorCd;
+import org.ject.momentia.api.image.service.ImageService;
 import org.ject.momentia.common.domain.artwork.ArtworkLike;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.collection.Collection;
 import org.ject.momentia.common.domain.collection.CollectionArtwork;
 import org.ject.momentia.common.domain.collection.type.CollectionStatus;
+import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,7 @@ public class CollectionService {
 
     private final CollectionRepository collectionRepository;
     private final CollectionArtworkRepository collectionArtworkRepository;
-    private final ArtworkPostRepository artworkPostRepository;
+    private final ImageService imageService;
 
     public CollectionIdResponse createCollection(CollectionCreateResquest request, User user) {
         Collection collection = CollectionConverter.toCollection(request,user);
@@ -47,6 +49,7 @@ public class CollectionService {
         Collection collection = collectionRepository.findById(collectionId).orElseThrow(ErrorCd.COLLECTION_NOT_FOUND::serviceException);
         if(user == null ||!collection.getUser().getId().equals(user.getId())) throw ErrorCd.NO_PERMISSION.serviceException();
         collectionRepository.delete(collection);
+        collectionArtworkRepository.deleteAllByCollection(collection);
     }
 
     @Transactional
@@ -65,8 +68,7 @@ public class CollectionService {
                     collectionArtworkRepository.findByArtworkPostByCollectionId(collectionList.get(i).getId(),user).orElse(null);
             String postImage = null;
             if(collectionArtwork!=null){
-                    ///  todo : 이미지 처리
-                    postImage = "empty";
+                postImage = imageService.getImageUrl(ImageTargetType.ARTWORK,collectionArtwork.getId());
             }
             collectionListModelList.add(CollectionConverter.toCollectionListModel(collectionList.get(i), postImage));
         }

@@ -56,6 +56,12 @@ public class ImageService {
 		tempImageRepository.delete(tempImage);
 	}
 
+	public String getImageUrl(ImageTargetType targetType, Long targetId) {
+		var image = imageRepository.findByTargetTypeAndTargetId(targetType, targetId)
+				.orElseThrow(ErrorCd.IMAGE_NOT_FOUND::serviceException);
+		return image.getImageSrc();
+	}
+
 	private String createKey() {
 		return UUID.randomUUID().toString();
 	}

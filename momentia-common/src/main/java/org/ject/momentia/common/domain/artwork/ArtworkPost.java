@@ -19,20 +19,15 @@ import org.ject.momentia.common.domain.user.User;
         name = "artwork_post",
         schema = "momentia"
 )
-//@AttributeOverrides({
-//        @AttributeOverride(name = "createdAt", column = @Column(name = "created_at", nullable = false)),
-//        @AttributeOverride(name = "updatedAt", column = @Column(name = "updated_at", nullable = false))
-//})
 public class ArtworkPost extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotNull
-    @Column(name = "post_image", nullable = false)
-    private Long postImage;
-
+//    @NotNull
+//    @Column(name = "post_image", nullable = false)
+//    private Long postImage;
 
     @NotNull
     @Enumerated(EnumType.STRING)

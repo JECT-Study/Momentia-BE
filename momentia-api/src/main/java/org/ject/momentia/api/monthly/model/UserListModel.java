@@ -7,7 +7,7 @@ public record UserListModel (
         Long userId,
         String profileImage,
         String nickname,
-        String field,
+        String userField,
         String introduction,
         Boolean isFollow,
         String artworkImage

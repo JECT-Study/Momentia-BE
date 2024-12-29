@@ -21,7 +21,7 @@ import java.util.Optional;
 @Repository
 public interface ArtworkPostRepository extends JpaRepository<ArtworkPost,Long> {
 
-    List<ArtworkPost> findAllByUserInOrderByCreatedAtDesc(Collection<User> users);
+    List<ArtworkPost> findAllByStatusAndUserInOrderByCreatedAtDesc(@NotNull ArtworkPostStatus status, Collection<@NotNull User> user);
 
     List<ArtworkPost> findAllByIdIn(Collection<Long> ids);
 

@@ -35,6 +35,6 @@ public class Image extends BaseEntity {
 	private ImageTargetType targetType;
 
 	@NotNull
-	@Column(name = "image_src", nullable = false, length = 200)
+	@Column(name = "image_src", nullable = false, length = 1000)
 	private String imageSrc;
 }

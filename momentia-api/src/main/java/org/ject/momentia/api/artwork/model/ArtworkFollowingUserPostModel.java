@@ -11,6 +11,7 @@ public record ArtworkFollowingUserPostModel (
         Long likeCount,
         Long viewCount,
         Long commentCount,
+        Boolean isLiked,
         LocalDateTime createdTime
 ){
 }

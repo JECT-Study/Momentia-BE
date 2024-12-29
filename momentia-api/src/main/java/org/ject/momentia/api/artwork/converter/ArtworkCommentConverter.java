@@ -8,22 +8,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ArtworkCommentConverter {
-    // User, commentList 받아서 본인여부 체크
-    public static List<ArtworkCommentModel> ArtworkCommentToArtworkCommentModel(List<ArtworkComment> commentList, User user) {
-        return commentList.stream()
-                .map(comment -> {
-                    boolean isMine = false;
-                    if (user != null) isMine = comment.getUser().getId().equals(user.getId());
-                    return ArtworkCommentModel.builder()
-                            .commentId(comment.getId())
-                            .userId(comment.getUser().getId())
-                            .content(comment.getContent())
-                            .isMine(isMine)
-                            /// todo : 이미지 처리
-                            .profileImage("empty")
-                            .createdTime(comment.getCreatedAt())
-                            .build();
-                })
-                .collect(Collectors.toList());
+
+
+    public static ArtworkCommentModel ArtworkCommentToArtworkCommentModel(ArtworkComment comment,String imageUrl,User user) {
+        boolean isMine = false;
+        if (user != null) isMine = comment.getUser().getId().equals(user.getId());
+        return ArtworkCommentModel.builder()
+                .commentId(comment.getId())
+                .userId(comment.getUser().getId())
+                .content(comment.getContent())
+                .isMine(isMine)
+                .profileImage(imageUrl)
+                .createdTime(comment.getCreatedAt())
+                .build();
     }
 }
