@@ -2,7 +2,7 @@ package org.ject.momentia.api.artwork.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.ject.momentia.api.artwork.service.ArtworkLikeService;
-import org.ject.momentia.api.artwork.service.Temp;
+import org.ject.momentia.api.mvc.annotation.MomentiaUser;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/artwork")
 public class ArtworkLikeController {
 
-    private final Temp temp;
     private final ArtworkLikeService artworkLikeService;
 
     /**
@@ -20,9 +19,7 @@ public class ArtworkLikeController {
      */
     @PostMapping("/post/{postId}/like")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void like(@PathVariable Long postId) {
-        ///  Todo : user 이후 수정
-        User user = temp.getUserObject();
+    public void like(@PathVariable Long postId,@MomentiaUser User user) {
         artworkLikeService.like(user,postId);
     }
 
@@ -32,9 +29,7 @@ public class ArtworkLikeController {
      */
     @DeleteMapping("/post/{postId}/like")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void unlike(@PathVariable Long postId) {
-        ///  Todo : user 이후 수정
-        User user = temp.getUserObject();
+    public void unlike(@PathVariable Long postId,@MomentiaUser User user) {
         artworkLikeService.unlike(user,postId);
     }
 

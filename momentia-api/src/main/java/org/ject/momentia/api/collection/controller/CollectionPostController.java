@@ -1,9 +1,9 @@
 package org.ject.momentia.api.collection.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.ject.momentia.api.artwork.service.Temp;
 import org.ject.momentia.api.collection.model.CollectionArtworkCreateResponse;
 import org.ject.momentia.api.collection.service.CollectionArtworkService;
+import org.ject.momentia.api.mvc.annotation.MomentiaUser;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,16 +14,13 @@ import org.springframework.web.bind.annotation.*;
 public class CollectionPostController {
 
     private final CollectionArtworkService collectionArtworkService;
-    private final Temp temp;
 
     /**
      * [POST] 컬렉션 내부 - 작품 추가
      */
     @PostMapping("/{collectionId}/post/{postId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public CollectionArtworkCreateResponse createCollectionPost(@PathVariable Long collectionId, @PathVariable Long postId) {
-        ///  Todo : user 이후 수정
-        User user = temp.getUserObject();
+    public CollectionArtworkCreateResponse createCollectionPost(@PathVariable Long collectionId, @PathVariable Long postId,@MomentiaUser User user) {
 
         return collectionArtworkService.create(collectionId,postId,user);
     }
@@ -33,9 +30,7 @@ public class CollectionPostController {
      */
     @DeleteMapping("/{collectionId}/post/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCollectionPost(@PathVariable Long collectionId, @PathVariable Long postId) {
-        ///  Todo : user 이후 수정
-        User user = temp.getUserObject();
+    public void deleteCollectionPost(@PathVariable Long collectionId, @PathVariable Long postId,@MomentiaUser User user) {
 
         collectionArtworkService.delete(collectionId,postId,user);
     }

@@ -2,10 +2,12 @@ package org.ject.momentia.api.collection.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
+import org.ject.momentia.common.domain.collection.Collection;
 import org.ject.momentia.common.domain.collection.CollectionArtwork;
 import org.ject.momentia.common.domain.collection.CollectionArtworkId;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -21,5 +23,13 @@ public interface CollectionArtworkRepository extends JpaRepository<CollectionArt
             "and (ap.status = 'PUBLIC' OR ap.user = :user) "+
             "ORDER BY ca.createdAt DESC limit 1")
     Optional<ArtworkPost> findByArtworkPostByCollectionId(@Param("collectionId") Long collectionId, @Param("userId") User user);
+
+    @Modifying
+    @Query("delete from CollectionArtwork ca where ca.id.artwork = :artworkPost")
+    void deleteAllByArtworkPost(ArtworkPost artworkPost);
+
+    @Modifying
+    @Query("delete from CollectionArtwork ca where ca.id.collection = :collection")
+    void deleteAllByCollection(Collection collection);
 
 }

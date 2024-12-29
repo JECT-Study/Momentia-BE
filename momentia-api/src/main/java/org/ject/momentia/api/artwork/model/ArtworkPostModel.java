@@ -9,7 +9,7 @@ public record ArtworkPostModel(
         String postImage,
         Long userId,
         String nickname,
-        Long view,
+        Long viewCount,
         Long likeCount,
         Long commentCount,
         boolean isLiked // 좋아요 여부

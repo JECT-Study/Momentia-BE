@@ -40,7 +40,6 @@ public class JwtFilter extends OncePerRequestFilter {
 		}
 
 		String accessToken = resolveAccessToken(request);
-		System.out.println("accessToken: 여기여기" + accessToken);
 
 		try {
 			if (accessToken != null) {

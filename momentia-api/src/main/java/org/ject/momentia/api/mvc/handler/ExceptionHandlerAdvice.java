@@ -116,7 +116,6 @@ public class ExceptionHandlerAdvice {
 	 */
 	@ExceptionHandler({HttpMediaTypeNotAcceptableException.class})
 	public ResponseEntity<Response> httpMediaTypeNotAcceptableException(HttpServletRequest req, Exception e) {
-		System.out.println("야호야호 "+e.getMessage());
 		return handle(req, e, ErrorCd.NOT_ACCEPTABLE, null);
 	}
 

@@ -11,12 +11,15 @@ import org.ject.momentia.api.artwork.model.ArtworkCommentModel;
 import org.ject.momentia.api.artwork.repository.ArtworkCommentRepository;
 import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
 import org.ject.momentia.api.exception.ErrorCd;
+import org.ject.momentia.api.image.service.ImageService;
 import org.ject.momentia.common.domain.artwork.ArtworkComment;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
+import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +27,7 @@ public class ArtworkCommentService {
 
     private final ArtworkCommentRepository artworkCommentRepository;
     private final ArtworkPostRepository artworkPostRepository;
+    private final ImageService imageService;
 
     @Transactional
     public ArtworkCommentIdResponse createComment(User user, Long postId, ArtworkCommentRequest artworkCommentCreateRequest) {
@@ -51,10 +55,22 @@ public class ArtworkCommentService {
         if (!artworkPostRepository.existsById(postId)) throw ErrorCd.ARTWORK_POST_NOT_FOUND.serviceException();
         List<ArtworkComment> commentList =
                 artworkCommentRepository.findByArtworkIdOrderByCreatedAtDescForInfiniteScrolling(postId, skip, size);
-        List<ArtworkCommentModel> comments = ArtworkCommentConverter.ArtworkCommentToArtworkCommentModel(commentList, user);
+        List<ArtworkCommentModel> comments =
+                commentList.stream()
+                        .map(comment -> {
+                            // 프로필 이미지
+                            String imageUrl = null;
+                            if(comment.getUser().getProfileImage()!=null) imageUrl = imageService.getImageUrl(ImageTargetType.PROFILE,user.getId());
+                            return ArtworkCommentConverter.ArtworkCommentToArtworkCommentModel(
+                                    comment,
+                                    imageUrl,
+                                    user
+                            );
+                        }).collect(Collectors.toList());
         return new ArtworkCommentListResponse(comments);
     }
 
+    @Transactional
     public void updateComment(User user, Long commentId, ArtworkCommentRequest artworkCommentUpdateRequest) {
         ArtworkComment comment = artworkCommentRepository.findById(commentId).orElseThrow(ErrorCd.ARTWORK_COMMENT_NOT_FOUND::serviceException);
         if(user == null || comment.getUser().getId() != user.getId()) ErrorCd.NO_PERMISSION.serviceException();

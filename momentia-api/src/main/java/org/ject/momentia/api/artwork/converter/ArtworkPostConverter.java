@@ -13,11 +13,10 @@ import java.util.ArrayList;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ArtworkPostConverter {
-    public static ArtworkPost toArtworPost(ArtworkPostCreateRequest artworkPostCreateRequest, User user) {
+    public static ArtworkPost toArtworkPost(ArtworkPostCreateRequest artworkPostCreateRequest, User user) {
         return ArtworkPost.builder()
                 .id(null)
                 .user(user)
-                .postImage(artworkPostCreateRequest.postImage())
                 .category(Category.valueOf(artworkPostCreateRequest.artworkField()))
                 .title(artworkPostCreateRequest.title())
                 .explanation(artworkPostCreateRequest.explanation())
@@ -32,7 +31,8 @@ public class ArtworkPostConverter {
         return new ArtworkPostIdResponse(artworkPost.getId());
     }
 
-    public static ArtworkPostResponse toArtworkPostResponse(ArtworkPost artworkPost, boolean isMine, boolean isLiked, String imageUrl) {
+    public static ArtworkPostResponse toArtworkPostResponse(ArtworkPost artworkPost, boolean isMine, boolean isLiked,
+                                                            String imageUrl,Boolean isFollow,String profileImage){
         return ArtworkPostResponse.builder()
                 .postId(artworkPost.getId())
                 .postImage(imageUrl)
@@ -41,10 +41,17 @@ public class ArtworkPostConverter {
                 .view(artworkPost.getViewCount())
                 .likeCount(artworkPost.getLikeCount())
                 .createdTime(artworkPost.getCreatedAt())
+                .artworkField(artworkPost.getCategory().name())
+
                 .userId(artworkPost.getUser().getId())
+                .userField(artworkPost.getUser().getField()==null ? null : artworkPost.getUser().getField().name())
+                .nickname(artworkPost.getUser().getNickname())
+                .introduction(artworkPost.getUser().getIntroduction())
+                .isFollow(isFollow)
+                .profileImage(profileImage)
+
                 .isMine(isMine)
                 .isLiked(isLiked)
-                .category(artworkPost.getCategory().name())
                 .build();
     }
 
@@ -60,13 +67,14 @@ public class ArtworkPostConverter {
         return ArtworkPostModel.builder()
                 .postId(artworkPost.getId())
                 .postImage(imageUrl)
-                .view(artworkPost.getViewCount())
+                .viewCount(artworkPost.getViewCount())
                 .nickname(artworkPost.getUser().getNickname())
                 .likeCount(artworkPost.getLikeCount())
                 .isLiked(isLiked) //
                 .likeCount(artworkPost.getLikeCount())
                 .title(artworkPost.getTitle())
                 .userId(artworkPost.getUser().getId())
+                .commentCount(artworkPost.getCommentCount())
                 .build();
     }
 
@@ -83,7 +91,7 @@ public class ArtworkPostConverter {
 
 
     public static ArtworkFollowingUserPostModel toArtworkFollowingUserPostModel(
-            ArtworkPost artworkPost, String postImage) {
+            ArtworkPost artworkPost, String postImage,Boolean isLiked) {
         return ArtworkFollowingUserPostModel.builder()
                 .postId(artworkPost.getId())
                 .title(artworkPost.getTitle())
@@ -91,6 +99,7 @@ public class ArtworkPostConverter {
                 .likeCount(artworkPost.getLikeCount())
                 .postImage(postImage)
                 .viewCount(artworkPost.getViewCount())
+                .isLiked(isLiked)
                 .createdTime(artworkPost.getCreatedAt())
                 .build();
     }

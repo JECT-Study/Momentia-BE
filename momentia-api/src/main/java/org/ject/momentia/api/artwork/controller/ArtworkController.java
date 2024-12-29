@@ -6,7 +6,7 @@ import org.ject.momentia.api.artwork.model.*;
 import org.ject.momentia.api.global.annotation.EnumValue;
 import org.ject.momentia.api.global.pagination.model.PaginationResponse;
 import org.ject.momentia.api.artwork.service.ArtworkService;
-import org.ject.momentia.api.artwork.service.Temp;
+import org.ject.momentia.api.mvc.annotation.MomentiaUser;
 import org.ject.momentia.common.domain.artwork.type.Category;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.http.HttpStatus;
@@ -19,19 +19,14 @@ import org.springframework.web.bind.annotation.*;
 public class ArtworkController {
 
     private final ArtworkService artworkService;
-    private final Temp temp;
 
     /**
      * [POST] 작품 업로드
      */
     @PostMapping("/post")
     @ResponseStatus(HttpStatus.CREATED)
-    public ArtworkPostIdResponse createPost(@RequestBody @Valid ArtworkPostCreateRequest artworkPostCreateRequest) {
-        ///  Todo : user 이후 수정
-        User user = temp.getUserObject();
-
-        ArtworkPostIdResponse artworkPostId = artworkService.createPost(user, artworkPostCreateRequest);
-        return artworkPostId;
+    public ArtworkPostIdResponse createPost(@RequestBody @Valid ArtworkPostCreateRequest artworkPostCreateRequest, @MomentiaUser User user) {
+        return artworkService.createPost(user, artworkPostCreateRequest);
     }
 
     /**
@@ -39,12 +34,8 @@ public class ArtworkController {
      */
     @GetMapping("/post/{postId}")
     @ResponseStatus(HttpStatus.OK)
-    public ArtworkPostResponse getPost(@PathVariable Long postId) {
-        ///  Todo : user 이후 수정
-        User user = temp.getUserObject();
-
-        ArtworkPostResponse artworkPostResponse = artworkService.getPost(user, postId);
-        return artworkPostResponse;
+    public ArtworkPostResponse getPost(@MomentiaUser User user,@PathVariable Long postId) {
+        return artworkService.getPost(user, postId);
     }
 
     /**
@@ -52,9 +43,7 @@ public class ArtworkController {
      */
     @DeleteMapping("/post/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePost(@PathVariable Long postId) {
-        ///  Todo : user 이후 수정
-        User user = temp.getUserObject();
+    public void deletePost(@PathVariable Long postId, @MomentiaUser User user) {
         artworkService.deletePost(user, postId);
     }
 
@@ -63,9 +52,7 @@ public class ArtworkController {
      */
     @PatchMapping("/post/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updatePost(@PathVariable Long postId, @RequestBody ArtworkPostUpdateRequest artworkPostUpdateRequest) {
-        ///  Todo : user 이후 수정
-        User user = temp.getUserObject();
+    public void updatePost(@PathVariable Long postId, @RequestBody ArtworkPostUpdateRequest artworkPostUpdateRequest, @MomentiaUser User user) {
         artworkService.updatePost(user, postId, artworkPostUpdateRequest);
     }
 
@@ -79,20 +66,18 @@ public class ArtworkController {
                                                             @RequestParam Integer page,
                                                             @RequestParam Integer size,
                                                             @EnumValue(enumClass = Category.class, ignoreCase = true,nullable = true)
-                                                            @RequestParam(required = false) String field
+                                                            @RequestParam(required = false) String artworkField,
+                                                            @MomentiaUser User user
     ) {
-        ///  Todo : user 이후 수정
-        User user = temp.getUserObject();
-
-        return artworkService.getPostList(user, sort, search, page, size, field);
+        return artworkService.getPostList(user, sort, search, page, size, artworkField);
     }
 
+    /**
+        [GET] 팔로잉 게시물
+     */
     @GetMapping("/followingUsers/posts")
     @ResponseStatus(HttpStatus.OK)
-    public ArtworkFolloingUserPostsResponse getPostList(){
-        ///  Todo : user 이후 수정
-        User user = temp.getUserObject();
-
+    public ArtworkFolloingUserPostsResponse getPostList(@MomentiaUser User user){
         return artworkService.getFollowingUserPosts(user);
     }
 

@@ -46,5 +46,9 @@ public class CollectionArtworkService {
         collectionArtworkRepository.delete(collectionArtwork);
     }
 
+    public void deleteAllArtworksInCollection(ArtworkPost post) {
+        collectionArtworkRepository.deleteAllByArtworkPost(post);
+    }
+
 
 }

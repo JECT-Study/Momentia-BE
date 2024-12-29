@@ -36,7 +36,8 @@ public class MomentiaUserArgumentHandler implements HandlerMethodArgumentResolve
 			return null;
 		}
 
-		var accessToken = authentication.getPrincipal().toString();
+		var accessToken = authentication.getCredentials().toString();
+
 		var userId = jwtTokenProvider.parseAccessToken(accessToken);
 
 		return userRepository.findById(userId)
@@ -45,7 +46,7 @@ public class MomentiaUserArgumentHandler implements HandlerMethodArgumentResolve
 
 	private Authentication getAuthentication() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication == null || !authentication.isAuthenticated()) {
+		if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
 			return null;
 		}
 		return authentication;
