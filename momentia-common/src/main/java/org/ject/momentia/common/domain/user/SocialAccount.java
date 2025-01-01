@@ -2,6 +2,7 @@ package org.ject.momentia.common.domain.user;
 
 import org.ject.momentia.common.domain.user.type.OAuthProvider;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -31,8 +32,8 @@ public class SocialAccount {
 	@Column(name = "user_id", nullable = false)
 	private Long id;
 
-	@MapsId
-	@OneToOne
+	@MapsId(value = "id")
+	@OneToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "user_id")
 	private User user;
 

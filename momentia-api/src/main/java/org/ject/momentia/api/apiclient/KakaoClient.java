@@ -1,13 +1,12 @@
 package org.ject.momentia.api.apiclient;
 
-import java.util.Map;
-
 import org.ject.momentia.api.apiclient.model.KakaoToken;
 import org.ject.momentia.api.apiclient.model.KakaoUserInfo;
 import org.ject.momentia.common.util.MomentiaStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class KakaoClient {
 	private static final String AUTHORIZATION_HEADER_FORMAT = "Bearer {}";
 	private final RestClient restClient = RestClient.create("https://kapi.kakao.com");
+	private final RestClient authClient = RestClient.create("https://kauth.kakao.com");
 
 	@Value("${api-client.kakao.client-id}")
 	private String clientId;
@@ -29,15 +29,16 @@ public class KakaoClient {
 	 * @return
 	 */
 	public KakaoToken requestToken(String code) {
-		var requestBody = Map.of(
-			"grant_type", "authorization_code",
-			"client_id", clientId,
-			"redirect_uri", redirectUri,
-			"code", code
-		);
+		var requestBody = new LinkedMultiValueMap<String, String>();
 
-		return restClient.post()
+		requestBody.add("grant_type", "authorization_code");
+		requestBody.add("code", code);
+		requestBody.add("client_id", clientId);
+		requestBody.add("redirect_uri", redirectUri);
+
+		return authClient.post()
 			.uri("/oauth/token")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 			.body(requestBody)
 			.retrieve()
 			.body(KakaoToken.class);

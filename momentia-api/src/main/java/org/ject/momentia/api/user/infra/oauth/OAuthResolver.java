@@ -47,7 +47,7 @@ public class OAuthResolver {
 		}
 
 		var nickname = getValidNickname(oauthUserInfo.userNickname());
-		var user = userRepository.saveAndFlush(UserConverter.nicknameOf(nickname));
+		var user = userRepository.save(UserConverter.nicknameOf(nickname));
 		socialAccountRepository.save(SocialAccountConverter.oAuthUserInfoOf(user, oauthUserInfo));
 
 		return Pair.of(user, false);
