@@ -95,7 +95,7 @@ public class ArtworkService {
 
     public PaginationResponse<ArtworkPostModel> getPostList(User user, String sort, String keyword, Integer page, Integer size, String categoryName) {
         Category category = (categoryName == null) ? null : Category.valueOf(categoryName);
-        String sortBy = sort.equals("popular") ? "likeCount" : sort.equals("view") ? "view" : "createdAt";
+        String sortBy = sort.equals("popular") ? "likeCount" : sort.equals("view") ? "viewCount" : "createdAt";
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
         Page<ArtworkPost> posts = artworkPostRepository.findByCategoryAndStatusAndTitleContainingIgnoreCaseOrUserNicknameContainingIgnoreCase(
