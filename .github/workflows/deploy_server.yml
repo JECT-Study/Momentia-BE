@@ -2,7 +2,7 @@ name: Build And Deploy to Server
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ feature/KBC_action_fix ]
   workflow_dispatch:
     inputs:
       deploy_target:
@@ -15,7 +15,7 @@ on:
           - real
 
 env:
-  DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/app-name
+  DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/momentia-api
   VERSION: ${{ github.sha }}
 
 jobs:
@@ -61,6 +61,7 @@ jobs:
               --name momentia-api-container-sandbox \
               -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=dev \
+              --env-file ./.env \
               ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
 
   deploy-server-alpha:
@@ -83,6 +84,7 @@ jobs:
               --name momentia-api-container-alpha \
               -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=dev \
+              --env-file ./.env \
               ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
 
   deploy-server-real:
@@ -105,4 +107,5 @@ jobs:
               --name momentia-api-container-real \
               -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=real \
+              --env-file ./.env \
               ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
