@@ -2,20 +2,14 @@ package org.ject.momentia.api.collection.service;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
-import org.ject.momentia.api.collection.converter.CollectionArtworkConverter;
 import org.ject.momentia.api.collection.converter.CollectionConverter;
 import org.ject.momentia.api.collection.model.*;
 import org.ject.momentia.api.collection.repository.CollectionArtworkRepository;
 import org.ject.momentia.api.collection.repository.CollectionRepository;
 import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.api.image.service.ImageService;
-import org.ject.momentia.common.domain.artwork.ArtworkLike;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.collection.Collection;
-import org.ject.momentia.common.domain.collection.CollectionArtwork;
-import org.ject.momentia.common.domain.collection.type.CollectionStatus;
 import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.stereotype.Service;
@@ -59,6 +53,9 @@ public class CollectionService {
         collection.update(request.name(), request.status());
     }
 
+    public Collection findCollectionElseThrowException(Long collectionId) {
+        return collectionRepository.findById(collectionId).orElseThrow(ErrorCd.COLLECTION_NOT_FOUND::serviceException);
+    }
 
     public CollecionListResponse getAllCollections(User user){
         List<Collection> collectionList = collectionRepository.findAllByUserOrderByCreatedAtDesc(user);

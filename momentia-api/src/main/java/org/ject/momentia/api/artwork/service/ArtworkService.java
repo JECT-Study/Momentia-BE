@@ -1,9 +1,9 @@
 package org.ject.momentia.api.artwork.service;
 
-import jakarta.persistence.Convert;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.ject.momentia.api.artwork.converter.ArtworkPostConverter;
+import org.ject.momentia.api.artwork.model.type.ArtworkPostSort;
 import org.ject.momentia.api.collection.service.CollectionArtworkService;
 import org.ject.momentia.api.follow.service.FollowService;
 import org.ject.momentia.api.global.pagination.converter.PaginationConverter;
@@ -43,7 +43,6 @@ public class ArtworkService {
     private final CollectionArtworkService collectionArtworkService;
     private final FollowService followService;
     private final ArtworkCommentRepository artworkCommentRepository;
-    private final ArtworkLikeService artworkLikeService;
 
     @Transactional
     public ArtworkPostIdResponse createPost(User user, ArtworkPostCreateRequest artworkPostCreateRequest) {
@@ -74,7 +73,7 @@ public class ArtworkService {
     @Transactional
     public void deletePost(User user, Long postId) {
         ArtworkPost artworkPost = artworkPostRepository.findById(postId).orElseThrow(ErrorCd.ARTWORK_POST_NOT_FOUND::serviceException);
-        if (user != null && user.getId() != artworkPost.getUser().getId()) ErrorCd.NO_PERMISSION.serviceException();
+        if (user != null && !Objects.equals(user.getId(), artworkPost.getUser().getId())) ErrorCd.NO_PERMISSION.serviceException();
 
         artworkPostRepository.delete(artworkPost);
 
@@ -88,14 +87,14 @@ public class ArtworkService {
     @Transactional
     public void updatePost(User user, Long postId, ArtworkPostUpdateRequest updateRequest) {
         ArtworkPost artworkPost = artworkPostRepository.findById(postId).orElseThrow(ErrorCd.ARTWORK_POST_NOT_FOUND::serviceException);
-        if (user == null || artworkPost.getUser().getId() != user.getId()) ErrorCd.NO_PERMISSION.serviceException();
+        if (user == null || !Objects.equals(artworkPost.getUser().getId(), user.getId())) ErrorCd.NO_PERMISSION.serviceException();
         artworkPost.updatePost(updateRequest.status(), updateRequest.artworkField(), updateRequest.title(), updateRequest.explanation());
         artworkPostRepository.save(artworkPost);
     }
 
     public PaginationResponse<ArtworkPostModel> getPostList(User user, String sort, String keyword, Integer page, Integer size, String categoryName) {
         Category category = (categoryName == null) ? null : Category.valueOf(categoryName);
-        String sortBy = sort.equals("popular") ? "likeCount" : sort.equals("view") ? "viewCount" : "createdAt";
+        String sortBy = ArtworkPostSort.valueOf(sort.toUpperCase()).getColumnName();
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
         Page<ArtworkPost> posts = artworkPostRepository.findByCategoryAndStatusAndTitleContainingIgnoreCaseOrUserNicknameContainingIgnoreCase(
@@ -139,7 +138,7 @@ public class ArtworkService {
             // 작가에 해당하는 post 조회
             for (int i = 0; i < posts.size(); i++) {
                 ArtworkPost post = posts.get(i);
-                if (post.getUser().getId() == u.getUserId()) {
+                if (post.getUser().getId().equals(u.getUserId())) {
                     String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK,post.getId());
                     Boolean isLiked = isLiked(user, post);
                     u.getPosts().add(ArtworkPostConverter.toArtworkFollowingUserPostModel(post,imageUrl,isLiked));

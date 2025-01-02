@@ -41,7 +41,7 @@ public class ArtworkCommentController {
      */
     @GetMapping("/post/{postId}/comments")
     @ResponseStatus(HttpStatus.OK)
-    public ArtworkCommentListResponse getCommentList(@PathVariable Long postId, @RequestParam(required = true) Long skip, @RequestParam(required = true) Long size, @MomentiaUser User user) {
+    public ArtworkCommentListResponse getCommentList(@PathVariable Long postId, @RequestParam Long skip, @RequestParam Long size, @MomentiaUser User user) {
         return artworkCommentService.getCommentList(user,postId,skip,size);
     }
 

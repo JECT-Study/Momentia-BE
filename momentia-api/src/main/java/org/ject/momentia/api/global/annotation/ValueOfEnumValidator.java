@@ -17,10 +17,7 @@ public class ValueOfEnumValidator implements ConstraintValidator<EnumValue, Stri
         boolean result = false;
         Enum<?>[] enumValues = this.enumValue.enumClass().getEnumConstants();
 
-        if(value==null){
-            if(enumValue.nullable()) return true;
-            else return false;
-        }
+        if(value==null){ return enumValue.nullable(); }
 
         if (enumValues != null) {
             for (Object enumValue : enumValues) {

@@ -1,6 +1,5 @@
 package org.ject.momentia.api.collection.converter;
 
-import org.ject.momentia.api.collection.model.CollectionListModel;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.collection.Collection;
 import org.ject.momentia.common.domain.collection.CollectionArtwork;

@@ -1,6 +1,4 @@
 package org.ject.momentia.api.artwork.model;
-
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import org.ject.momentia.api.global.annotation.EnumValue;
 import org.ject.momentia.common.domain.artwork.type.ArtworkPostStatus;

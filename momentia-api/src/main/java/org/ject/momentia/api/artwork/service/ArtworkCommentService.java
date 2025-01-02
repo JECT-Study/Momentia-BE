@@ -19,6 +19,7 @@ import org.ject.momentia.common.domain.user.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,7 +74,7 @@ public class ArtworkCommentService {
     @Transactional
     public void updateComment(User user, Long commentId, ArtworkCommentRequest artworkCommentUpdateRequest) {
         ArtworkComment comment = artworkCommentRepository.findById(commentId).orElseThrow(ErrorCd.ARTWORK_COMMENT_NOT_FOUND::serviceException);
-        if(user == null || comment.getUser().getId() != user.getId()) ErrorCd.NO_PERMISSION.serviceException();
+        if(user == null || !Objects.equals(comment.getUser().getId(), user.getId())) ErrorCd.NO_PERMISSION.serviceException();
         comment.update(artworkCommentUpdateRequest.content());
     }
 
