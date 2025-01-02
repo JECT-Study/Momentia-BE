@@ -1,6 +1,6 @@
 package org.ject.momentia.api.apiclient;
 
-import org.ject.momentia.api.apiclient.model.KakaoToken;
+import org.ject.momentia.api.apiclient.model.OAuthToken;
 import org.ject.momentia.api.apiclient.model.KakaoUserInfo;
 import org.ject.momentia.common.util.MomentiaStringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +28,7 @@ public class KakaoClient {
 	 * @param code
 	 * @return
 	 */
-	public KakaoToken requestToken(String code) {
+	public OAuthToken requestToken(String code) {
 		var requestBody = new LinkedMultiValueMap<String, String>();
 
 		requestBody.add("grant_type", "authorization_code");
@@ -41,7 +41,7 @@ public class KakaoClient {
 			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 			.body(requestBody)
 			.retrieve()
-			.body(KakaoToken.class);
+			.body(OAuthToken.class);
 	}
 
 	/**

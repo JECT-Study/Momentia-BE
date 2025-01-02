@@ -7,11 +7,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+    open-in-view: false
 
 api-client:
   kakao:
     client-id: ${MOMENTIA_ENV_KAKAO_CLIENT_ID}
     redirect-uri: ${MOMENTIA_ENV_KAKAO_REDIRECT_URI}
+  google:
+    client-id: ${MOMENTIA_ENV_GOOGLE_CLIENT_ID}
+    client-secret: ${MOMENTIA_ENV_GOOGLE_CLIENT_SECRET}
+    redirect-uri: ${MOMENTIA_ENV_GOOGLE_REDIRECT_URI}
 
 jwt:
   secret: ${MOMENTIA_ENV_JWT_SECRET}
