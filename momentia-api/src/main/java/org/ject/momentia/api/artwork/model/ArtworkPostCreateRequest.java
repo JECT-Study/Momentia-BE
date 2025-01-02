@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.ject.momentia.api.global.annotation.EnumValue;
 import org.ject.momentia.common.domain.artwork.type.Category;
-import org.ject.momentia.common.domain.collection.type.CollectionStatus;
 
 public record ArtworkPostCreateRequest(
         @NotEmpty @Size(min = 1, max = 50)
@@ -14,7 +13,7 @@ public record ArtworkPostCreateRequest(
         // category 검증 어노테이션
         @NotEmpty
         @NotNull
-        @EnumValue(enumClass = Category.class, ignoreCase = true,nullable = false)
+        @EnumValue(enumClass = Category.class)
         String artworkField,
 
         @NotNull

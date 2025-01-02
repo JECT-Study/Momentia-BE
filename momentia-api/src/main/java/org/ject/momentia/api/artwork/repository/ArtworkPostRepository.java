@@ -2,18 +2,15 @@ package org.ject.momentia.api.artwork.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.artwork.type.ArtworkPostStatus;
 import org.ject.momentia.common.domain.artwork.type.Category;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +28,8 @@ public interface ArtworkPostRepository extends JpaRepository<ArtworkPost,Long> {
     @Query("SELECT p FROM ArtworkPost p JOIN User u ON p.user.id = u.id " +
             "WHERE (:category IS NULL OR p.category = :category) " +
             "AND p.status = 'PUBLIC' " +
-            "AND (:keyword IS NULL OR p.title LIKE %:keyword% OR u.nickname LIKE %:keyword%)")
+            "AND (:keyword IS NULL OR REPLACE(p.title, ' ', '') LIKE %:keyword% " +
+            "OR REPLACE(u.nickname, ' ', '') LIKE %:keyword%)")
     Page<ArtworkPost> findByCategoryAndStatusAndTitleContainingIgnoreCaseOrUserNicknameContainingIgnoreCase(
             @Param("category") Category category,
             @Param("keyword") String keyword,

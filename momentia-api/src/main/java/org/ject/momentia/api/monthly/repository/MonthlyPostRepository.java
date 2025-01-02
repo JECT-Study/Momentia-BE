@@ -4,8 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import org.ject.momentia.common.domain.monthly.MonthlyArtwork;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.time.Month;
 import java.util.List;
 
 @Repository

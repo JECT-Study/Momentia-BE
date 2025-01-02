@@ -25,8 +25,7 @@ public class CollectionController {
     @PostMapping("/collection")
     @ResponseStatus(HttpStatus.CREATED)
     public CollectionIdResponse createCollection(@RequestBody @Valid CollectionCreateResquest request, @MomentiaUser User user) {
-        CollectionIdResponse response =  collectionService.createCollection(request, user);
-        return response;
+        return collectionService.createCollection(request, user);
     }
 
     /**

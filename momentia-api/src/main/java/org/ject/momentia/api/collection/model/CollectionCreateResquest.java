@@ -12,7 +12,7 @@ public record CollectionCreateResquest(
 
         @NotEmpty
         @NotNull
-        @EnumValue(enumClass = CollectionStatus.class, message = "유효하지 않은 status입니다.", ignoreCase = true)
+        @EnumValue(enumClass = CollectionStatus.class)
         String status
 ) {
 }

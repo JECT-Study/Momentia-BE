@@ -1,10 +1,8 @@
 package org.ject.momentia.api.monthly.service;
 
 import lombok.AllArgsConstructor;
-import org.hibernate.type.ManyToOneType;
 import org.ject.momentia.api.artwork.converter.ArtworkPostConverter;
 import org.ject.momentia.api.artwork.model.ArtworkPostModel;
-import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
 import org.ject.momentia.api.artwork.service.ArtworkService;
 import org.ject.momentia.api.follow.service.FollowService;
 import org.ject.momentia.api.image.service.ImageService;
@@ -15,7 +13,6 @@ import org.ject.momentia.api.monthly.model.UserListModel;
 import org.ject.momentia.api.monthly.repository.MonthlyPostRepository;
 import org.ject.momentia.api.monthly.repository.MonthlyUserRepository;
 import org.ject.momentia.api.user.repository.UserRepository;
-import org.ject.momentia.common.domain.artwork.ArtworkLikeId;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.ject.momentia.common.domain.monthly.MonthlyArtwork;

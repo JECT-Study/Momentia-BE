@@ -9,5 +9,5 @@ public enum FieldType {
     ILLUSTRATION,
     DIGITALART,
     PHOTOGRAPHY,
-    OTHERS;
+    OTHERS
 }

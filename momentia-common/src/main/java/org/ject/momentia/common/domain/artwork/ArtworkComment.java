@@ -24,10 +24,6 @@ public class ArtworkComment extends BaseEntity {
     @Column(name = "content", nullable = false, length = 500)
     private String content;
 
-//    @NotNull
-//    @Column(name = "post_id", nullable = false)
-//    private Long postId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="post_id",referencedColumnName = "id",nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @NotNull

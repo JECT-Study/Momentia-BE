@@ -9,5 +9,5 @@ public enum Category {
     ILLUSTRATION,
     DIGITALART,
     PHOTOGRAPHY,
-    OTHERS;
+    OTHERS
 }

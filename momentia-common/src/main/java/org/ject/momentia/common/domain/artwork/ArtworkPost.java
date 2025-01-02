@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.ject.momentia.common.domain.artwork.type.ArtworkPostStatus;
 import org.ject.momentia.common.domain.artwork.type.Category;
 import org.ject.momentia.common.domain.base.BaseEntity;
@@ -24,10 +23,6 @@ public class ArtworkPost extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-//    @NotNull
-//    @Column(name = "post_image", nullable = false)
-//    private Long postImage;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -54,10 +49,6 @@ public class ArtworkPost extends BaseEntity {
     @NotNull
     @Column(name = "comment_count", nullable = false)
     private Long commentCount;
-
-//    @NotNull
-//    @Column(name = "user_id", nullable = false)
-//    private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
