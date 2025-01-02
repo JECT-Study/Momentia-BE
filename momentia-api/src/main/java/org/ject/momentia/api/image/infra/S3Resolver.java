@@ -11,10 +11,11 @@ import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetUrlRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 @Component
@@ -32,7 +33,7 @@ public class S3Resolver {
 
 	public Pair<String, String> startImageUpload(String imageKey, Long expectedSize, String contentType) {
 		var putUrl = createPresignedPutUrl(imageKey, expectedSize, contentType);
-		var getUrl = createPresignedGetUrl(imageKey);
+		var getUrl = createPublicGetUrl(imageKey);
 
 		return Pair.of(putUrl, getUrl);
 	}
@@ -44,6 +45,7 @@ public class S3Resolver {
 				.key(imageKey)
 				.contentLength(expectedSize)
 				.contentType(contentType)
+				.acl(ObjectCannedACL.PUBLIC_READ)
 				.build();
 
 			var presignedRequest = PutObjectPresignRequest.builder()
@@ -56,25 +58,27 @@ public class S3Resolver {
 		}
 	}
 
-	private String createPresignedGetUrl(String imageKey) {
-		try (var s3Presigner = createS3Presigner()) {
-			var getObjectRequest = GetObjectRequest.builder()
+	private String createPublicGetUrl(String imageKey) {
+		try (var s3Client = createS3Client()) {
+			var getUrlRequest = GetUrlRequest.builder()
 				.bucket(s3Property.bucketName())
 				.key(imageKey)
 				.build();
 
-			var presignedRequest = GetObjectPresignRequest.builder()
-				.signatureDuration(PUT_IMAGE_DURATION)
-				.getObjectRequest(getObjectRequest)
-				.build();
-
-			var presignedGetObjectRequest = s3Presigner.presignGetObject(presignedRequest);
-			return presignedGetObjectRequest.url().toExternalForm();
+			return s3Client.utilities().getUrl(getUrlRequest).toExternalForm();
 		}
 	}
 
 	private S3Presigner createS3Presigner() {
 		return S3Presigner.builder()
+			.credentialsProvider(staticCredentialsProvider)
+			.endpointOverride(URI.create(s3Property.endpoint()))
+			.region(Region.of(s3Property.region()))
+			.build();
+	}
+
+	private S3Client createS3Client() {
+		return S3Client.builder()
 			.credentialsProvider(staticCredentialsProvider)
 			.endpointOverride(URI.create(s3Property.endpoint()))
 			.region(Region.of(s3Property.region()))
