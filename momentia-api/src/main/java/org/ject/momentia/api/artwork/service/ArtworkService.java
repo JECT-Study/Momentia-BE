@@ -95,9 +95,9 @@ public class ArtworkService {
     public PaginationResponse<ArtworkPostModel> getPostList(User user, String sort, String keyword, Integer page, Integer size, String categoryName) {
         Category category = (categoryName == null) ? null : Category.valueOf(categoryName);
         String sortBy = ArtworkPostSort.valueOf(sort.toUpperCase()).getColumnName();
-
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
-        keyword = keyword.replaceAll(" ", "");
+        if (keyword != null && (keyword = keyword.trim().replaceAll(" ", "")).isBlank()) keyword = null;
+
         Page<ArtworkPost> posts = artworkPostRepository.findByCategoryAndStatusAndTitleContainingIgnoreCaseOrUserNicknameContainingIgnoreCase(
                 category,
                 keyword,

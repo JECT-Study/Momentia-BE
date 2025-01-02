@@ -1,9 +1,14 @@
 package org.ject.momentia.api.artwork.controller;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.ject.momentia.api.artwork.model.*;
 import org.ject.momentia.api.artwork.model.type.ArtworkPostSort;
+import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.api.global.annotation.EnumValue;
 import org.ject.momentia.api.global.pagination.model.PaginationResponse;
 import org.ject.momentia.api.artwork.service.ArtworkService;
@@ -12,7 +17,6 @@ import org.ject.momentia.common.domain.artwork.type.Category;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -66,9 +70,9 @@ public class ArtworkController {
             @EnumValue(enumClass = ArtworkPostSort.class, ignoreCase = true)
             @RequestParam String sort,
             @RequestParam(required = false) String search,
-            @RequestParam Integer page,
-            @RequestParam Integer size,
-            @EnumValue(enumClass = Category.class, ignoreCase = true, nullable = true)
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) Integer size,
+            @EnumValue(enumClass = Category.class, nullable = true)
             @RequestParam(required = false) String artworkField,
             @MomentiaUser User user
     ) {
