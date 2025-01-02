@@ -1,10 +1,11 @@
 package org.ject.momentia.api.image.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+
 import org.ject.momentia.api.image.model.StartUploadRequest;
 import org.ject.momentia.api.image.model.StartUploadResponse;
 import org.ject.momentia.api.image.service.ImageService;
-import org.ject.momentia.api.mvc.annotation.MomentiaUser;
-import org.ject.momentia.common.domain.user.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
