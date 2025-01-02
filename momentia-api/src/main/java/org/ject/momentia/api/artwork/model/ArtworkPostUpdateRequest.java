@@ -12,7 +12,7 @@ public record ArtworkPostUpdateRequest(
         @Size(max = 1000)
         String explanation,
 
-        @EnumValue(enumClass = Category.class, ignoreCase = true,nullable = true)
+        @EnumValue(enumClass = Category.class, nullable = true)
         String artworkField,
 
         @EnumValue(enumClass = ArtworkPostStatus.class, ignoreCase = true,nullable = true)

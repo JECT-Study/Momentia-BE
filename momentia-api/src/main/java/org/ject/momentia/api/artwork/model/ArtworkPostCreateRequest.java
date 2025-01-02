@@ -13,7 +13,7 @@ public record ArtworkPostCreateRequest(
         // category 검증 어노테이션
         @NotEmpty
         @NotNull
-        @EnumValue(enumClass = Category.class, ignoreCase = true)
+        @EnumValue(enumClass = Category.class)
         String artworkField,
 
         @NotNull
