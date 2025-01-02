@@ -97,6 +97,7 @@ public class ArtworkService {
         String sortBy = ArtworkPostSort.valueOf(sort.toUpperCase()).getColumnName();
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
+        keyword = keyword.replaceAll(" ", "");
         Page<ArtworkPost> posts = artworkPostRepository.findByCategoryAndStatusAndTitleContainingIgnoreCaseOrUserNicknameContainingIgnoreCase(
                 category,
                 keyword,

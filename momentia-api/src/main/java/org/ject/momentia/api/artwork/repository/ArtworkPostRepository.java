@@ -28,7 +28,8 @@ public interface ArtworkPostRepository extends JpaRepository<ArtworkPost,Long> {
     @Query("SELECT p FROM ArtworkPost p JOIN User u ON p.user.id = u.id " +
             "WHERE (:category IS NULL OR p.category = :category) " +
             "AND p.status = 'PUBLIC' " +
-            "AND (:keyword IS NULL OR p.title LIKE %:keyword% OR u.nickname LIKE %:keyword%)")
+            "AND (:keyword IS NULL OR REPLACE(p.title, ' ', '') LIKE %:keyword% " +
+            "OR REPLACE(u.nickname, ' ', '') LIKE %:keyword%)")
     Page<ArtworkPost> findByCategoryAndStatusAndTitleContainingIgnoreCaseOrUserNicknameContainingIgnoreCase(
             @Param("category") Category category,
             @Param("keyword") String keyword,
