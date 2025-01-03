@@ -41,10 +41,10 @@ public class ArtworkPostConverter {
                 .view(artworkPost.getViewCount())
                 .likeCount(artworkPost.getLikeCount())
                 .createdTime(artworkPost.getCreatedAt())
-                .artworkField(artworkPost.getCategory().name())
+                .artworkField(artworkPost.getCategory().getKoreanName())
 
                 .userId(artworkPost.getUser().getId())
-                .userField(artworkPost.getUser().getField()==null ? null : artworkPost.getUser().getField().name())
+                .userField(artworkPost.getUser().getField()==null ? null : artworkPost.getUser().getField().getKoreanName())
                 .nickname(artworkPost.getUser().getNickname())
                 .introduction(artworkPost.getUser().getIntroduction())
                 .isFollow(isFollow)
@@ -84,7 +84,7 @@ public class ArtworkPostConverter {
                 .nickname(user.getNickname())
                 .userImage(imageUrl)
                 .isFollow(true)
-                .userField(user.getField() == null ? null : user.getField().name())
+                .userField(user.getField() == null ? null : user.getField().getKoreanName())
                 .posts(new ArrayList<>())
                 .build();
     }
