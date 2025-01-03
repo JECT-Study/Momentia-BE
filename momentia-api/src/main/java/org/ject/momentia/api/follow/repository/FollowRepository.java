@@ -16,4 +16,6 @@ public interface FollowRepository extends JpaRepository<Follow, FollowId> {
             "JOIN Follow f ON u = f.id.user " +
             "WHERE f.id.follower = :follower")
     List<User> findFollowingUsers(@Param("follower") User follower);
+
+
 }

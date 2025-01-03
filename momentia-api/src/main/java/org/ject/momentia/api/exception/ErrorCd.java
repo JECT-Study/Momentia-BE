@@ -25,6 +25,10 @@ public enum ErrorCd {
 	DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "Duplicate Nickname"),
 	DUPLICATE_EMAIL(HttpStatus.CONFLICT, "Duplicate Email"),
 
+	// Follow Error
+	ALREADY_FOLLOW(HttpStatus.CONFLICT, "Already Follow"),
+	CANNOT_FOLLOW_SELF(HttpStatus.CONFLICT, "Cannot Follow Self"),
+	FOLLOW_NOT_FOUND(HttpStatus.CONFLICT, "follow not found"),
 
 	// Artwork Error
 	ARTWORK_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "artwork post not found"),

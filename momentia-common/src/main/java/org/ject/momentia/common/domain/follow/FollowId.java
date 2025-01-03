@@ -2,18 +2,15 @@ package org.ject.momentia.common.domain.follow;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.Hibernate;
 import org.ject.momentia.common.domain.user.User;
 
 import java.util.Objects;
 
 @Getter
-@Setter
 @Embeddable
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class FollowId implements java.io.Serializable {

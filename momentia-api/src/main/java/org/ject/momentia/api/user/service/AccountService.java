@@ -13,6 +13,7 @@ import org.ject.momentia.api.user.model.RefreshTokenRequest;
 import org.ject.momentia.api.user.model.SocialLoginResponse;
 import org.ject.momentia.api.user.repository.NormalAccountRepository;
 import org.ject.momentia.api.user.repository.UserRepository;
+import org.ject.momentia.common.domain.user.User;
 import org.ject.momentia.common.domain.user.type.OAuthProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -98,5 +99,9 @@ public class AccountService {
 		if (!jwtTokenProvider.validateToken(refreshToken) || RefreshTokenHolder.getRefreshToken(refreshToken) == null) {
 			throw ErrorCd.NOT_AUTHORIZED.serviceException();
 		}
+	}
+
+	public User findByIdElseThrowException(Long userId){
+		return userRepository.findById(userId).orElseThrow(ErrorCd.USER_NOT_FOUND::serviceException);
 	}
 }

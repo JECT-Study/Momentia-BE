@@ -77,6 +77,18 @@ public class User {
 	@Column(name = "field", nullable = true, length = 20)
 	private FieldType field;
 
+	public void increaseFollowerCount() {
+		this.followerCount++;
+	}
+	public void increaseFollowingCount() {
+		this.followingCount++;
+	}
+	public void decreaseFollowerCount() {
+		this.followerCount--;
+	}
+	public void decreaseFollowingCount() {
+		this.followingCount--;
+	}
 
 	public boolean matchAccountType(AccountType accountType) {
 		return this.accountType == accountType;
