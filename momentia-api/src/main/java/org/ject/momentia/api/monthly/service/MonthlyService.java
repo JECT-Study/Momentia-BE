@@ -1,5 +1,6 @@
 package org.ject.momentia.api.monthly.service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.ject.momentia.api.artwork.converter.ArtworkPostConverter;
 import org.ject.momentia.api.artwork.model.ArtworkPostModel;
@@ -37,6 +38,7 @@ public class MonthlyService {
     private final FollowService followService;
     private final ImageService imageService;
 
+    @Transactional
     public MonthlyPostsResponse getMonthlyPosts(User user) {
         List<MonthlyArtwork> artworkList = monthlyPostRepository.findAllByMonthAndYearOrderByRankAsc(12, 2024);
 
@@ -63,6 +65,7 @@ public class MonthlyService {
         return new MonthlyPostsResponse(postModelList);
     }
 
+    @Transactional
     public MonthlyUsersResponse getMonthlyUsers(User user) {
 
         List<MonthlyUser> monthlyUsers = monthlyUserRepository.findAllByMonthAndYearOrderByRankAsc(12, 2024);
