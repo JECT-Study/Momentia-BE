@@ -9,7 +9,7 @@ public class MonthlyUserConverter {
                 .userId(user.getId())
                 .artworkImage(artworkImage)
                 .nickname(user.getNickname())
-                .userField(user.getField() == null ? null : user.getField().name())
+                .userField(user.getField() == null ? null : user.getField().getKoreanName())
                 .introduction(user.getIntroduction())
                 .isFollow(isFollow)
                 .artworkImage(artworkImage)
