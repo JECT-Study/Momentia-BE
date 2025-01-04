@@ -55,6 +55,7 @@ public class ArtworkService {
         return ArtworkPostConverter.toArtworkPostIdResponse(artworkPost);
     }
 
+    @Transactional
     public ArtworkPostResponse getPost(User user, Long postId) {
         ///  Todo : 조회수 처리
 
@@ -92,6 +93,7 @@ public class ArtworkService {
         artworkPostRepository.save(artworkPost);
     }
 
+    @Transactional
     public PaginationResponse<ArtworkPostModel> getPostList(User user, String sort, String keyword, Integer page, Integer size, String categoryName) {
         Category category = (categoryName == null) ? null : Category.valueOf(categoryName);
         String sortBy = ArtworkPostSort.valueOf(sort.toUpperCase()).getColumnName();
@@ -121,6 +123,7 @@ public class ArtworkService {
         );
     }
 
+    @Transactional
     public ArtworkFolloingUserPostsResponse getFollowingUserPosts(User user) {
         if (user == null) throw ErrorCd.NO_PERMISSION.serviceException();
         List<User> userList = followRepository.findFollowingUsers(user);
@@ -178,6 +181,7 @@ public class ArtworkService {
     public Boolean isLiked(User user,ArtworkPost post){
         return user != null && artworkLikeRepository.existsById(new ArtworkLikeId(user, post));
     }
+
 
     public ArtworkPost getPopularArtworkByUser(User user){
         return artworkPostRepository.findFirstByUserAndStatusOrderByLikeCountDesc(user, ArtworkPostStatus.PUBLIC).orElse(null);

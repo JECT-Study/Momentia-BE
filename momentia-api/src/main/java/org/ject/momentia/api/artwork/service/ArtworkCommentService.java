@@ -51,7 +51,7 @@ public class ArtworkCommentService {
         comment.getPost().decreaseCommentCount();
     }
 
-
+    @Transactional
     public ArtworkCommentListResponse getCommentList(User user, Long postId, Long skip, Long size) {
         if (!artworkPostRepository.existsById(postId)) throw ErrorCd.ARTWORK_POST_NOT_FOUND.serviceException();
         List<ArtworkComment> commentList =
