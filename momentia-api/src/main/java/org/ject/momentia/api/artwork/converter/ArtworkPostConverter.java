@@ -38,8 +38,9 @@ public class ArtworkPostConverter {
                 .postImage(imageUrl)
                 .explanation(artworkPost.getExplanation())
                 .title(artworkPost.getTitle())
-                .view(artworkPost.getViewCount())
+                .viewCount(artworkPost.getViewCount())
                 .likeCount(artworkPost.getLikeCount())
+                .commentCount(artworkPost.getCommentCount())
                 .createdTime(artworkPost.getCreatedAt())
                 .artworkField(artworkPost.getCategory().getKoreanName())
 

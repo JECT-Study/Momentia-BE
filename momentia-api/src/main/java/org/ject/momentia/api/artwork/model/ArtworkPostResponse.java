@@ -9,8 +9,9 @@ public record ArtworkPostResponse(
         String title,
         String postImage,
         String artworkField,
-        Long view,
+        Long viewCount,
         Long likeCount,
+        Long commentCount,
         LocalDateTime createdTime,
         String explanation,
         boolean isLiked, // 좋아요 여부
