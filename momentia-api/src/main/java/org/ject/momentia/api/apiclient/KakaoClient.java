@@ -29,6 +29,7 @@ public class KakaoClient {
 	 * @return
 	 */
 	public OAuthToken requestToken(String code) {
+		log.debug("requested - time:{}, code:{}", System.currentTimeMillis(), code);
 		var requestBody = new LinkedMultiValueMap<String, String>();
 
 		requestBody.add("grant_type", "authorization_code");

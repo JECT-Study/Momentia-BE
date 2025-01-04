@@ -2,7 +2,7 @@ name: Build And Deploy to Server
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ test/login ]
   workflow_dispatch:
     inputs:
       deploy_target:
