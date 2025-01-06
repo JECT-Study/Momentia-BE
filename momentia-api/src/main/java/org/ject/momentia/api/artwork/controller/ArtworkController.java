@@ -1,17 +1,13 @@
 package org.ject.momentia.api.artwork.controller;
 
-import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.ject.momentia.api.artwork.model.*;
 import org.ject.momentia.api.artwork.model.type.ArtworkPostSort;
-import org.ject.momentia.api.exception.ErrorCd;
-import org.ject.momentia.api.global.annotation.EnumValue;
-import org.ject.momentia.api.global.pagination.model.PaginationResponse;
-import org.ject.momentia.api.artwork.service.ArtworkService;
+import org.ject.momentia.api.mvc.annotation.EnumValue;
+import org.ject.momentia.api.pagination.model.PaginationResponse;
+import org.ject.momentia.api.artwork.service.ArtworkPostService;
 import org.ject.momentia.api.mvc.annotation.MomentiaUser;
 import org.ject.momentia.common.domain.artwork.type.Category;
 import org.ject.momentia.common.domain.user.User;
@@ -23,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/artwork")
 public class ArtworkController {
 
-    private final ArtworkService artworkService;
+    private final ArtworkPostService artworkPostService;
 
     /**
      * [POST] 작품 업로드
@@ -31,7 +27,7 @@ public class ArtworkController {
     @PostMapping("/post")
     @ResponseStatus(HttpStatus.CREATED)
     public ArtworkPostIdResponse createPost(@RequestBody @Valid ArtworkPostCreateRequest artworkPostCreateRequest, @MomentiaUser User user) {
-        return artworkService.createPost(user, artworkPostCreateRequest);
+        return artworkPostService.createPost(user, artworkPostCreateRequest);
     }
 
     /**
@@ -40,7 +36,7 @@ public class ArtworkController {
     @GetMapping("/post/{postId}")
     @ResponseStatus(HttpStatus.OK)
     public ArtworkPostResponse getPost(@MomentiaUser User user, @PathVariable Long postId) {
-        return artworkService.getPost(user, postId);
+        return artworkPostService.getPost(user, postId);
     }
 
     /**
@@ -49,7 +45,7 @@ public class ArtworkController {
     @DeleteMapping("/post/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePost(@PathVariable Long postId, @MomentiaUser User user) {
-        artworkService.deletePost(user, postId);
+        artworkPostService.deletePost(user, postId);
     }
 
     /**
@@ -58,7 +54,7 @@ public class ArtworkController {
     @PatchMapping("/post/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updatePost(@PathVariable Long postId, @RequestBody ArtworkPostUpdateRequest artworkPostUpdateRequest, @MomentiaUser User user) {
-        artworkService.updatePost(user, postId, artworkPostUpdateRequest);
+        artworkPostService.updatePost(user, postId, artworkPostUpdateRequest);
     }
 
     /**
@@ -76,7 +72,7 @@ public class ArtworkController {
             @RequestParam(required = false) String artworkField,
             @MomentiaUser User user
     ) {
-        return artworkService.getPostList(user, sort, search, page, size, artworkField);
+        return artworkPostService.getPostList(user, sort, search, page, size, artworkField);
     }
 
     /**
@@ -85,7 +81,7 @@ public class ArtworkController {
     @GetMapping("/followingUsers/posts")
     @ResponseStatus(HttpStatus.OK)
     public ArtworkFolloingUserPostsResponse getPostList(@MomentiaUser User user) {
-        return artworkService.getFollowingUserPosts(user);
+        return artworkPostService.getFollowingUserPosts(user);
     }
 
 
