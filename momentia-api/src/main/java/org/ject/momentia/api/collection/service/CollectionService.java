@@ -4,8 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.ject.momentia.api.collection.converter.CollectionConverter;
 import org.ject.momentia.api.collection.model.*;
-import org.ject.momentia.api.collection.repository.CollectionArtworkRepository;
 import org.ject.momentia.api.collection.repository.CollectionRepository;
+import org.ject.momentia.api.collection.service.module.CollectionArtworkModuleService;
 import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.api.image.service.ImageService;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
@@ -13,7 +13,6 @@ import org.ject.momentia.common.domain.collection.Collection;
 import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +22,11 @@ import java.util.List;
 public class CollectionService {
 
     private final CollectionRepository collectionRepository;
-    private final CollectionArtworkRepository collectionArtworkRepository;
-    private final ImageService imageService;
 
+    private final ImageService imageService;
+    private final CollectionArtworkModuleService collectionArtworkService;
+
+    @Transactional
     public CollectionIdResponse createCollection(CollectionCreateResquest request, User user) {
         Collection collection = CollectionConverter.toCollection(request,user);
 
@@ -39,11 +40,12 @@ public class CollectionService {
     }
 
 
+    @Transactional
     public void deleteCollection(Long collectionId, User user) {
         Collection collection = collectionRepository.findById(collectionId).orElseThrow(ErrorCd.COLLECTION_NOT_FOUND::serviceException);
         if(user == null ||!collection.getUser().getId().equals(user.getId())) throw ErrorCd.NO_PERMISSION.serviceException();
         collectionRepository.delete(collection);
-        collectionArtworkRepository.deleteAllByCollection(collection);
+        collectionArtworkService.deleteAllByCollection(collection);
     }
 
     @Transactional
@@ -53,24 +55,23 @@ public class CollectionService {
         collection.update(request.name(), request.status());
     }
 
-    public Collection findCollectionElseThrowException(Long collectionId) {
-        return collectionRepository.findById(collectionId).orElseThrow(ErrorCd.COLLECTION_NOT_FOUND::serviceException);
-    }
-
+    @Transactional
     public CollecionListResponse getAllCollections(User user){
+        if(user==null) throw ErrorCd.NO_PERMISSION.serviceException();
         List<Collection> collectionList = collectionRepository.findAllByUserOrderByCreatedAtDesc(user);
         List<CollectionListModel> collectionListModelList = new ArrayList<>();
-        for(int i=0;i<collectionList.size();i++){
+        for (Collection collection : collectionList) {
             ArtworkPost collectionArtwork =
-                    collectionArtworkRepository.findByArtworkPostByCollectionId(collectionList.get(i).getId(),user).orElse(null);
+                    collectionArtworkService.findByArtworkPostByCollectionIdElseReturnNull(user, collection.getId());
             String postImage = null;
-            if(collectionArtwork!=null){
-                postImage = imageService.getImageUrl(ImageTargetType.ARTWORK,collectionArtwork.getId());
+            if (collectionArtwork != null) {
+                postImage = imageService.getImageUrl(ImageTargetType.ARTWORK, collectionArtwork.getId());
             }
-            collectionListModelList.add(CollectionConverter.toCollectionListModel(collectionList.get(i), postImage));
+            collectionListModelList.add(CollectionConverter.toCollectionListModel(collection, postImage));
         }
         return new CollecionListResponse(collectionListModelList);
     }
+
 
 
 }

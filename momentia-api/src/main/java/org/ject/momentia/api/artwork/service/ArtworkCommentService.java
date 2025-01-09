@@ -9,7 +9,7 @@ import org.ject.momentia.api.artwork.model.ArtworkCommentIdResponse;
 import org.ject.momentia.api.artwork.model.ArtworkCommentListResponse;
 import org.ject.momentia.api.artwork.model.ArtworkCommentModel;
 import org.ject.momentia.api.artwork.repository.ArtworkCommentRepository;
-import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
+import org.ject.momentia.api.artwork.service.module.ArtworkPostModuleService;
 import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.api.image.service.ImageService;
 import org.ject.momentia.common.domain.artwork.ArtworkComment;
@@ -27,12 +27,13 @@ import java.util.stream.Collectors;
 public class ArtworkCommentService {
 
     private final ArtworkCommentRepository artworkCommentRepository;
-    private final ArtworkPostRepository artworkPostRepository;
+
     private final ImageService imageService;
+    private final ArtworkPostModuleService artworkService;
 
     @Transactional
     public ArtworkCommentIdResponse createComment(User user, Long postId, ArtworkCommentRequest artworkCommentCreateRequest) {
-        ArtworkPost post = artworkPostRepository.findById(postId).orElseThrow(ErrorCd.ARTWORK_POST_NOT_FOUND::serviceException);
+        ArtworkPost post = artworkService.findPostByIdElseThrowError(postId);
         ArtworkComment comment = ArtworkPostConverter.from(artworkCommentCreateRequest, post, user);
         comment = artworkCommentRepository.save(comment);
 
@@ -53,7 +54,7 @@ public class ArtworkCommentService {
 
     @Transactional
     public ArtworkCommentListResponse getCommentList(User user, Long postId, Long skip, Long size) {
-        if (!artworkPostRepository.existsById(postId)) throw ErrorCd.ARTWORK_POST_NOT_FOUND.serviceException();
+        artworkService.findPostByIdElseThrowError(postId);
         List<ArtworkComment> commentList =
                 artworkCommentRepository.findByArtworkIdOrderByCreatedAtDescForInfiniteScrolling(postId, skip, size);
         List<ArtworkCommentModel> comments =

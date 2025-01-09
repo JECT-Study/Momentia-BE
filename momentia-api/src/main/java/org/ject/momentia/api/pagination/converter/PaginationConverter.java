@@ -1,6 +1,6 @@
-package org.ject.momentia.api.global.pagination.converter;
+package org.ject.momentia.api.pagination.converter;
 
-import org.ject.momentia.api.global.pagination.model.PaginationModel;
+import org.ject.momentia.api.pagination.model.PaginationModel;
 import org.springframework.data.domain.Page;
 
 public class PaginationConverter {

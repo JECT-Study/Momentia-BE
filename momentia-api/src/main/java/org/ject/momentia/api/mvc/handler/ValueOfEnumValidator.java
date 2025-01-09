@@ -1,7 +1,8 @@
-package org.ject.momentia.api.global.annotation;
+package org.ject.momentia.api.mvc.handler;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.ject.momentia.api.mvc.annotation.EnumValue;
 
 public class ValueOfEnumValidator implements ConstraintValidator<EnumValue, String> {
 

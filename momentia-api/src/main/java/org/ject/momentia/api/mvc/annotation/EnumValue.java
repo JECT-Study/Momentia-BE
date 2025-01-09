@@ -1,7 +1,8 @@
-package org.ject.momentia.api.global.annotation;
+package org.ject.momentia.api.mvc.annotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import org.ject.momentia.api.mvc.handler.ValueOfEnumValidator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

@@ -1,4 +1,4 @@
-package org.ject.momentia.api.global.pagination.model;
+package org.ject.momentia.api.pagination.model;
 
 
 import lombok.Builder;

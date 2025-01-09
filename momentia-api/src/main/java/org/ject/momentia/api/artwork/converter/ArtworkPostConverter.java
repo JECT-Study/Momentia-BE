@@ -84,7 +84,7 @@ public class ArtworkPostConverter {
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .userImage(imageUrl)
-                .isFollow(true)
+                .isFollow(true) // 팔로잉한 유저에서 가져온 데이터 이므로 무조건 true로 반환
                 .userField(user.getField() == null ? null : user.getField().getKoreanName())
                 .posts(new ArrayList<>())
                 .build();
@@ -92,7 +92,7 @@ public class ArtworkPostConverter {
 
 
     public static ArtworkFollowingUserPostModel toArtworkFollowingUserPostModel(
-            ArtworkPost artworkPost, String postImage,Boolean isLiked) {
+            FollowingUserPostProjection artworkPost, String postImage,Boolean isLiked) {
         return ArtworkFollowingUserPostModel.builder()
                 .postId(artworkPost.getId())
                 .title(artworkPost.getTitle())
