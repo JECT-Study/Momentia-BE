@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ject.momentia.api.collection.converter.CollectionConverter;
-import org.ject.momentia.api.collection.model.CollecionListResponse;
 import org.ject.momentia.api.collection.model.CollectionCreateResquest;
 import org.ject.momentia.api.collection.model.CollectionIdResponse;
 import org.ject.momentia.api.collection.model.CollectionListModel;
+import org.ject.momentia.api.collection.model.CollectionListResponse;
 import org.ject.momentia.api.collection.model.CollectionUpdateRequest;
 import org.ject.momentia.api.collection.model.type.CollectionSort;
 import org.ject.momentia.api.collection.repository.CollectionRepository;
@@ -75,7 +75,7 @@ public class CollectionService {
 	}
 
 	@Transactional
-	public CollecionListResponse getAllCollections(User user) {
+	public CollectionListResponse getAllCollections(User user) {
 		if (user == null)
 			throw ErrorCd.NO_PERMISSION.serviceException();
 		List<Collection> collectionList = collectionRepository.findAllByUserOrderByCreatedAtDesc(user);
@@ -89,7 +89,7 @@ public class CollectionService {
 			}
 			collectionListModelList.add(CollectionConverter.toCollectionListModel(collection, postImage));
 		}
-		return new CollecionListResponse(collectionListModelList);
+		return new CollectionListResponse(collectionListModelList);
 	}
 
 	@Transactional

@@ -1,9 +1,9 @@
 package org.ject.momentia.api.collection.controller;
 
-import org.ject.momentia.api.collection.model.CollecionListResponse;
 import org.ject.momentia.api.collection.model.CollectionCreateResquest;
 import org.ject.momentia.api.collection.model.CollectionIdResponse;
 import org.ject.momentia.api.collection.model.CollectionListModel;
+import org.ject.momentia.api.collection.model.CollectionListResponse;
 import org.ject.momentia.api.collection.model.CollectionUpdateRequest;
 import org.ject.momentia.api.collection.model.type.CollectionSort;
 import org.ject.momentia.api.collection.service.CollectionService;
@@ -68,7 +68,7 @@ public class CollectionController {
 	 */
 	@GetMapping("/collections/all")
 	@ResponseStatus(HttpStatus.OK)
-	public CollecionListResponse getAllCollections(@MomentiaUser User user) {
+	public CollectionListResponse getAllCollections(@MomentiaUser User user) {
 		return collectionService.getAllCollections(user);
 	}
 
