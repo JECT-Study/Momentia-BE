@@ -124,11 +124,16 @@ public class ArtworkPostService {
 		if (keyword != null && (keyword = keyword.trim().replaceAll(" ", "")).isBlank())
 			keyword = null;
 
-		Page<ArtworkPost> posts = artworkPostRepository.findByCategoryAndStatusAndTitleContainingIgnoreCaseOrUserNicknameContainingIgnoreCase(
-			category,
-			keyword,
-			pageable
-		);
+		Page<ArtworkPost> posts;
+
+		// 검색 할 경우
+		if (keyword != null)
+			posts = artworkPostRepository.search(category, keyword, pageable);
+		else {
+			posts = (category != null)
+				? artworkPostRepository.findByCategoryAndStatus(category, ArtworkPostStatus.PUBLIC, pageable)
+				: artworkPostRepository.findByStatus(ArtworkPostStatus.PUBLIC, pageable);
+		}
 
 		List<ArtworkPostModel> postModelList = posts.getContent().stream()
 			.map((p) -> {

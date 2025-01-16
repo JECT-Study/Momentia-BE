@@ -30,13 +30,16 @@ public interface ArtworkPostRepository extends JpaRepository<ArtworkPost, Long> 
 
 	Optional<ArtworkPost> findFirstByUserAndStatusOrderByLikeCountDesc(User user, ArtworkPostStatus status);
 
-	// 작품 리스트 쿼리
-	@Query("SELECT p FROM ArtworkPost p JOIN User u ON p.user.id = u.id " +
+	Page<ArtworkPost> findByCategoryAndStatus(Category category, ArtworkPostStatus status, Pageable pageable);
+
+	Page<ArtworkPost> findByStatus(ArtworkPostStatus status, Pageable pageable);
+
+	@Query("SELECT p FROM ArtworkPost p LEFT JOIN p.user u " +
 		"WHERE (:category IS NULL OR p.category = :category) " +
 		"AND p.status = 'PUBLIC' " +
-		"AND (:keyword IS NULL OR REPLACE(p.title, ' ', '') LIKE %:keyword% " +
-		"OR REPLACE(u.nickname, ' ', '') LIKE %:keyword%)")
-	Page<ArtworkPost> findByCategoryAndStatusAndTitleContainingIgnoreCaseOrUserNicknameContainingIgnoreCase(
+		"AND (:keyword IS NULL " +
+		"OR (REPLACE(p.title, ' ', '') LIKE %:keyword% OR REPLACE(u.nickname, ' ', '') LIKE %:keyword%))")
+	Page<ArtworkPost> search(
 		@Param("category") Category category,
 		@Param("keyword") String keyword,
 		Pageable pageable
@@ -64,5 +67,5 @@ public interface ArtworkPostRepository extends JpaRepository<ArtworkPost, Long> 
 		"AND (p.user = :user OR p.status = 'PUBLIC')"
 	)
 	Page<ArtworkPost> findAllByIdIn(Collection<Long> ids, User user, Pageable pageable);
-
+	
 }
