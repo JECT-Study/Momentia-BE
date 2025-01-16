@@ -21,9 +21,6 @@ import jakarta.validation.constraints.NotNull;
 @Repository
 public interface ArtworkPostRepository extends JpaRepository<ArtworkPost, Long> {
 
-	List<ArtworkPost> findAllByStatusAndUserInOrderByCreatedAtDesc(@NotNull ArtworkPostStatus status,
-		Collection<@NotNull User> user);
-
 	List<ArtworkPost> findAllByIdIn(Collection<Long> ids);
 
 	List<ArtworkPost> findAllByIdInAndStatus(Collection<Long> ids, @NotNull ArtworkPostStatus status);
@@ -67,5 +64,5 @@ public interface ArtworkPostRepository extends JpaRepository<ArtworkPost, Long> 
 		"AND (p.user = :user OR p.status = 'PUBLIC')"
 	)
 	Page<ArtworkPost> findAllByIdIn(Collection<Long> ids, User user, Pageable pageable);
-	
+
 }

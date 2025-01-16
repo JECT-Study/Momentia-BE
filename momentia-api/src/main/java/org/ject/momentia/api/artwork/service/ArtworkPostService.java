@@ -16,7 +16,6 @@ import org.ject.momentia.api.artwork.model.ArtworkPostUpdateRequest;
 import org.ject.momentia.api.artwork.model.FollowingUserModel;
 import org.ject.momentia.api.artwork.model.FollowingUserPostProjection;
 import org.ject.momentia.api.artwork.model.type.ArtworkPostSort;
-import org.ject.momentia.api.artwork.repository.ArtworkLikeRepository;
 import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
 import org.ject.momentia.api.artwork.service.module.ArtworkCommentModuleService;
 import org.ject.momentia.api.artwork.service.module.ArtworkLikeModuleService;
@@ -56,7 +55,6 @@ public class ArtworkPostService {
 	private final FollowModuleService followService;
 	private final ArtworkLikeModuleService artworkLikeService;
 	private final ArtworkCommentModuleService artworkCommentService;
-	private final ArtworkLikeRepository artworkLikeRepository;
 
 	@Transactional
 	public ArtworkPostIdResponse createPost(User user, ArtworkPostCreateRequest artworkPostCreateRequest) {
