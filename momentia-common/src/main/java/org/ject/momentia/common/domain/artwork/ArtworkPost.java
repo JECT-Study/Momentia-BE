@@ -56,7 +56,7 @@ public class ArtworkPost extends BaseEntity {
 	private String explanation;
 
 	@NotNull
-	@Column(name = "viewCount", nullable = false)
+	@Column(name = "view_count", nullable = false)
 	private Long viewCount;
 
 	@NotNull
