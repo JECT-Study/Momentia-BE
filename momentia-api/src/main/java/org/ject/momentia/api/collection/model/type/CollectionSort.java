@@ -2,7 +2,8 @@ package org.ject.momentia.api.collection.model.type;
 
 public enum CollectionSort {
 	RECENT("createdAt"),
-	ALPHABETIC("name");
+	ALPHABETIC("name"),
+	;
 
 	private final String columnName;
 
