@@ -1,6 +1,6 @@
 package org.ject.momentia.api.collection.controller;
 
-import org.ject.momentia.api.collection.model.CollectionCreateResquest;
+import org.ject.momentia.api.collection.model.CollectionCreateRequest;
 import org.ject.momentia.api.collection.model.CollectionIdResponse;
 import org.ject.momentia.api.collection.model.CollectionListModel;
 import org.ject.momentia.api.collection.model.CollectionListResponse;
@@ -39,7 +39,7 @@ public class CollectionController {
 	 */
 	@PostMapping("/collection")
 	@ResponseStatus(HttpStatus.CREATED)
-	public CollectionIdResponse createCollection(@RequestBody @Valid CollectionCreateResquest request,
+	public CollectionIdResponse createCollection(@RequestBody @Valid CollectionCreateRequest request,
 		@MomentiaUser User user) {
 		return collectionService.createCollection(request, user);
 	}

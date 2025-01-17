@@ -6,8 +6,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.ject.momentia.api.artwork.converter.ArtworkPostConverter;
-import org.ject.momentia.api.artwork.model.ArtworkFolloingUserPostsResponse;
 import org.ject.momentia.api.artwork.model.ArtworkFollowingUserPostModel;
+import org.ject.momentia.api.artwork.model.ArtworkFollowingUserPostsResponse;
 import org.ject.momentia.api.artwork.model.ArtworkPostCreateRequest;
 import org.ject.momentia.api.artwork.model.ArtworkPostIdResponse;
 import org.ject.momentia.api.artwork.model.ArtworkPostModel;
@@ -151,7 +151,7 @@ public class ArtworkPostService {
 	}
 
 	@Transactional
-	public ArtworkFolloingUserPostsResponse getFollowingUserPosts(User user) {
+	public ArtworkFollowingUserPostsResponse getFollowingUserPosts(User user) {
 		if (user == null)
 			throw ErrorCd.NO_PERMISSION.serviceException();
 		/// 팔로우 하고 있는 유저 리스트
@@ -184,7 +184,7 @@ public class ArtworkPostService {
 		}
 
 		sortByFirstPost(userModelList);
-		return new ArtworkFolloingUserPostsResponse(userModelList);
+		return new ArtworkFollowingUserPostsResponse(userModelList);
 	}
 
 	@Transactional

@@ -1,6 +1,6 @@
 package org.ject.momentia.api.artwork.controller;
 
-import org.ject.momentia.api.artwork.model.ArtworkFolloingUserPostsResponse;
+import org.ject.momentia.api.artwork.model.ArtworkFollowingUserPostsResponse;
 import org.ject.momentia.api.artwork.model.ArtworkPostCreateRequest;
 import org.ject.momentia.api.artwork.model.ArtworkPostIdResponse;
 import org.ject.momentia.api.artwork.model.ArtworkPostModel;
@@ -70,7 +70,8 @@ public class ArtworkController {
 	 */
 	@PatchMapping("/post/{postId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void updatePost(@PathVariable Long postId, @RequestBody ArtworkPostUpdateRequest artworkPostUpdateRequest,
+	public void updatePost(@PathVariable Long postId,
+		@Valid @RequestBody ArtworkPostUpdateRequest artworkPostUpdateRequest,
 		@MomentiaUser User user) {
 		artworkPostService.updatePost(user, postId, artworkPostUpdateRequest);
 	}
@@ -98,7 +99,7 @@ public class ArtworkController {
 	 */
 	@GetMapping("/followingUsers/posts")
 	@ResponseStatus(HttpStatus.OK)
-	public ArtworkFolloingUserPostsResponse getPostList(@MomentiaUser User user) {
+	public ArtworkFollowingUserPostsResponse getPostList(@MomentiaUser User user) {
 		return artworkPostService.getFollowingUserPosts(user);
 	}
 

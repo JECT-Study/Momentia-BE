@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ject.momentia.api.collection.converter.CollectionConverter;
-import org.ject.momentia.api.collection.model.CollectionCreateResquest;
+import org.ject.momentia.api.collection.model.CollectionCreateRequest;
 import org.ject.momentia.api.collection.model.CollectionIdResponse;
 import org.ject.momentia.api.collection.model.CollectionListModel;
 import org.ject.momentia.api.collection.model.CollectionListResponse;
@@ -43,7 +43,7 @@ public class CollectionService {
 	private final CollectionArtworkModuleService collectionArtworkService;
 
 	@Transactional
-	public CollectionIdResponse createCollection(CollectionCreateResquest request, User user) {
+	public CollectionIdResponse createCollection(CollectionCreateRequest request, User user) {
 		Collection collection = CollectionConverter.toCollection(request, user);
 
 		// 이름 중복 체크
