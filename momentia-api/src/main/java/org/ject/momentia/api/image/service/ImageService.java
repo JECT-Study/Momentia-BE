@@ -8,9 +8,10 @@ import org.ject.momentia.api.image.converter.TempImageConverter;
 import org.ject.momentia.api.image.infra.S3Resolver;
 import org.ject.momentia.api.image.model.StartUploadRequest;
 import org.ject.momentia.api.image.model.StartUploadResponse;
-import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.ject.momentia.api.image.repository.ImageRepository;
 import org.ject.momentia.api.image.repository.TempImageRepository;
+import org.ject.momentia.common.domain.image.Image;
+import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,8 +59,13 @@ public class ImageService {
 
 	public String getImageUrl(ImageTargetType targetType, Long targetId) {
 		var image = imageRepository.findByTargetTypeAndTargetId(targetType, targetId)
-				.orElseThrow(ErrorCd.IMAGE_NOT_FOUND::serviceException);
+			.orElseThrow(ErrorCd.IMAGE_NOT_FOUND::serviceException);
 		return image.getImageSrc();
+	}
+
+	public Image validateActiveImage(Long imageId) {
+		return imageRepository.findById(imageId)
+			.orElseThrow(ErrorCd.IMAGE_NOT_FOUND::serviceException);
 	}
 
 	private String createKey() {
