@@ -1,5 +1,7 @@
 package org.ject.momentia.common.domain.user;
 
+import org.apache.commons.lang3.ObjectUtils;
+import org.ject.momentia.common.domain.image.Image;
 import org.ject.momentia.common.domain.user.type.AccountStatus;
 import org.ject.momentia.common.domain.user.type.AccountType;
 import org.ject.momentia.common.domain.user.type.FieldType;
@@ -12,6 +14,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -44,8 +48,9 @@ public class User {
 	@Column(name = "nickname", nullable = false, length = 50)
 	private String nickname;
 
-	@Column(name = "profile_image")
-	private Long profileImage;
+	@JoinColumn(name = "profile_image")
+	@OneToOne
+	private Image profileImage;
 
 	@Size(max = 50)
 	@Column(name = "introduction", length = 50)
@@ -93,8 +98,19 @@ public class User {
 		this.followingCount--;
 	}
 
+	public void update(FieldType field, String nickname, String introduction, Image profileImage) {
+		this.field = ObjectUtils.defaultIfNull(field, this.field);
+		this.nickname = ObjectUtils.defaultIfNull(nickname, this.nickname);
+		this.introduction = ObjectUtils.defaultIfNull(introduction, this.introduction);
+		this.profileImage = ObjectUtils.defaultIfNull(profileImage, this.profileImage);
+	}
+
 	public boolean matchAccountType(AccountType accountType) {
 		return this.accountType == accountType;
+	}
+
+	public boolean isMine(Long userId) {
+		return this.id.equals(userId);
 	}
 
 	@Override

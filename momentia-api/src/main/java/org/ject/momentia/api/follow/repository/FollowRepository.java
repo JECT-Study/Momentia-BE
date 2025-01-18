@@ -25,7 +25,7 @@ public interface FollowRepository extends JpaRepository<Follow, FollowId> {
 		)
 		FROM User u
 		JOIN Follow f ON u = f.id.user
-		LEFT JOIN Image i ON u.profileImage = i.id
+		LEFT JOIN Image i ON u.profileImage = i
 		WHERE f.id.follower = :follower
 		""")
 	List<FollowInfo> findFollowingUsersInfo(@Param("follower") User follower);
@@ -36,7 +36,7 @@ public interface FollowRepository extends JpaRepository<Follow, FollowId> {
 		)
 		FROM User u
 		JOIN Follow f ON u = f.id.follower
-		LEFT JOIN Image i ON u.profileImage = i.id
+		LEFT JOIN Image i ON u.profileImage = i
 		WHERE f.id.user = :following
 		""")
 	List<FollowInfo> findFollowerUsersInfo(@Param("following") User following);
