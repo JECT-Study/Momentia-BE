@@ -2,6 +2,7 @@ package org.ject.momentia.common.domain.user;
 
 import org.ject.momentia.common.domain.user.type.AccountStatus;
 import org.ject.momentia.common.domain.user.type.AccountType;
+import org.ject.momentia.common.domain.user.type.FieldType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +20,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.ject.momentia.common.domain.user.type.FieldType;
 
 @Getter
 @Entity
@@ -80,17 +80,35 @@ public class User {
 	public void increaseFollowerCount() {
 		this.followerCount++;
 	}
+
 	public void increaseFollowingCount() {
 		this.followingCount++;
 	}
+
 	public void decreaseFollowerCount() {
 		this.followerCount--;
 	}
+
 	public void decreaseFollowingCount() {
 		this.followingCount--;
 	}
 
 	public boolean matchAccountType(AccountType accountType) {
 		return this.accountType == accountType;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		User user = (User)o;
+		return id != null && id.equals(user.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id.intValue();
 	}
 }

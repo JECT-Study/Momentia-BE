@@ -1,29 +1,31 @@
 package org.ject.momentia.api.mvc.annotation;
 
-import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
-import org.ject.momentia.api.mvc.handler.ValueOfEnumValidator;
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.*;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.ject.momentia.api.mvc.handler.ValueOfEnumValidator;
 
-@Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
+
+@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Documented
 @Constraint(validatedBy = ValueOfEnumValidator.class)
 public @interface EnumValue {
-    Class<? extends Enum<?>> enumClass();
+	Class<? extends Enum<?>> enumClass();
 
-    String message() default "";
+	String message() default "";
 
-    Class<?>[] groups() default {};
+	Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+	Class<? extends Payload>[] payload() default {};
 
-    boolean ignoreCase() default false;
-    boolean nullable() default false;
+	boolean ignoreCase() default false;
+
+	boolean nullable() default false;
 }

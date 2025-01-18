@@ -72,7 +72,12 @@ public class ExceptionHandlerAdvice {
 	})
 	public ResponseEntity<Response> parameterException(HttpServletRequest req, Exception e) {
 		// TODO - 세부 param 정보 제공
-		return handle(req, e, ErrorCd.INVALID_PARAMETER, null);
+		String errorMessage = null;
+		if (e instanceof MethodArgumentNotValidException) {
+			MethodArgumentNotValidException ex = (MethodArgumentNotValidException)e;
+			errorMessage = ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+		}
+		return handle(req, e, ErrorCd.INVALID_PARAMETER, errorMessage);
 	}
 
 	/**
