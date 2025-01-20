@@ -18,6 +18,7 @@ public class ArtworkCommentConverter {
 			.isMine(isMine)
 			.profileImage(imageUrl)
 			.createdTime(comment.getCreatedAt())
+			.nickname(comment.getUser().getNickname())
 			.build();
 	}
 }
