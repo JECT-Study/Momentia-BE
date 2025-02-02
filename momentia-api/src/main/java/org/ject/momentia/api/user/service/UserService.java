@@ -29,13 +29,16 @@ public class UserService {
 	 * @return
 	 */
 	public UserInfo getUserInfo(User user, Long userId) {
-		if (userId == null || user.isMine(userId)) {
-			return UserConverter.toUserInfo(user, true, true);
+		// userId가 null인 경우, 본인 프로필
+		if (userId == null) {
+			if (user == null)
+				throw ErrorCd.NO_PERMISSION.serviceException();
+			return UserConverter.toUserInfo(user, true, false);
 		}
-
+		
 		var targetUser = accountService.findByIdElseThrowException(userId);
 		var isFollow = followModuleService.isFollowing(user, targetUser);
-		return UserConverter.toUserInfo(targetUser, false, isFollow);
+		return UserConverter.toUserInfo(targetUser, user != null && user.isMine(userId), isFollow);
 	}
 
 	@Transactional
