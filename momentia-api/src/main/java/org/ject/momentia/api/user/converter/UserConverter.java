@@ -35,10 +35,10 @@ public class UserConverter {
 	public static UserInfo toUserInfo(User user, boolean isMine, boolean isFollow) {
 		return UserInfo.builder()
 			.userId(user.getId())
-			.email(user.getEmail())
+			.nickname(user.getNickname())
 			.followerCount(user.getFollowerCount())
 			.followingCount(user.getFollowingCount())
-			.field(user.getField())
+			.userField(user.getField() == null ? null : user.getField().getKoreanName())
 			.introduction(user.getIntroduction())
 			.isMine(isMine)
 			.isFollow(isFollow)
