@@ -83,8 +83,7 @@ public class ArtworkPostService {
 		String profileImage = artworkPost.getUser().getProfileImage() != null ?
 			imageService.getImageUrl(ImageTargetType.PROFILE, artworkPost.getUser().getId()) : null;
 
-		return ArtworkPostConverter.toArtworkPostResponse(artworkPost, isMine, isLiked, postImage, isFollow,
-			profileImage);
+		return ArtworkPostConverter.toArtworkPostResponse(artworkPost, isMine, isLiked, postImage, isFollow);
 	}
 
 	@Transactional
@@ -164,7 +163,7 @@ public class ArtworkPostService {
 			String imageUrl = null;
 			if (u.getProfileImage() != null)
 				imageUrl = imageService.getImageUrl(ImageTargetType.PROFILE, u.getId());
-			return ArtworkPostConverter.toFollowingUserModel(u, imageUrl);
+			return ArtworkPostConverter.toFollowingUserModel(u);
 		}).collect(Collectors.toList());
 
 		Iterator<FollowingUserModel> iterator = userModelList.iterator();
