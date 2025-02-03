@@ -8,6 +8,8 @@ import org.ject.momentia.api.user.converter.UserConverter;
 import org.ject.momentia.api.user.model.UserInfo;
 import org.ject.momentia.api.user.model.UserUpdateRequest;
 import org.ject.momentia.api.user.repository.UserRepository;
+import org.ject.momentia.common.domain.image.Image;
+import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +37,7 @@ public class UserService {
 				throw ErrorCd.NO_PERMISSION.serviceException();
 			return UserConverter.toUserInfo(user, true, false);
 		}
-		
+
 		var targetUser = accountService.findByIdElseThrowException(userId);
 		var isFollow = followModuleService.isFollowing(user, targetUser);
 		return UserConverter.toUserInfo(targetUser, user != null && user.isMine(userId), isFollow);
@@ -44,10 +46,16 @@ public class UserService {
 	@Transactional
 	public UserInfo updateInfo(User user, UserUpdateRequest userUpdateRequest) {
 		validateUserUpdateRequestParam(userUpdateRequest);
+		Image image = null;
 		var updateImageId = userUpdateRequest.profileImage();
-		var updateImage = updateImageId == null ? null : imageService.validateActiveImage(updateImageId);
+
+		if (updateImageId != null) {
+			imageService.validateTempImage(updateImageId, true);
+			image = imageService.useImageToService(updateImageId, ImageTargetType.PROFILE, user.getId());
+		}
+
 		user.update(userUpdateRequest.field(), userUpdateRequest.nickname(),
-			userUpdateRequest.introduction(), updateImage);
+			userUpdateRequest.introduction(), image);
 		return UserConverter.toUserInfo(userRepository.save(user), true, true);
 	}
 

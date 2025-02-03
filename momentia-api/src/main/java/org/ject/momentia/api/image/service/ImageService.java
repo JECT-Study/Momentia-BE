@@ -48,13 +48,15 @@ public class ImageService {
 	}
 
 	@Transactional
-	public void useImageToService(Long imageId, ImageTargetType targetType, Long targetId) {
+	public Image useImageToService(Long imageId, ImageTargetType targetType, Long targetId) {
 		var tempImage = tempImageRepository.findById(imageId)
 			.orElseThrow(ErrorCd.IMAGE_NOT_FOUND::serviceException);
 
 		var image = ImageConverter.ofTempImage(tempImage, targetType, targetId);
 		imageRepository.save(image);
 		tempImageRepository.delete(tempImage);
+
+		return image;
 	}
 
 	public String getImageUrl(ImageTargetType targetType, Long targetId) {
@@ -66,6 +68,15 @@ public class ImageService {
 	public Image validateActiveImage(Long imageId) {
 		return imageRepository.findById(imageId)
 			.orElseThrow(ErrorCd.IMAGE_NOT_FOUND::serviceException);
+	}
+
+	public void validateTempImage(Long imageId, boolean isActive) {
+		var tempImage = tempImageRepository.findById(imageId)
+			.orElseThrow(ErrorCd.IMAGE_NOT_FOUND::serviceException);
+
+		if (isActive && !tempImage.isUploaded()) {
+			throw ErrorCd.IMAGE_NOT_UPLOADED.serviceException();
+		}
 	}
 
 	private String createKey() {
