@@ -69,11 +69,11 @@ public class ArtworkController {
 	 * [PATCH] 작품 수정
 	 */
 	@PatchMapping("/post/{postId}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void updatePost(@PathVariable Long postId,
+	@ResponseStatus(HttpStatus.OK)
+	public ArtworkPostIdResponse updatePost(@PathVariable Long postId,
 		@Valid @RequestBody ArtworkPostUpdateRequest artworkPostUpdateRequest,
 		@MomentiaUser User user) {
-		artworkPostService.updatePost(user, postId, artworkPostUpdateRequest);
+		return artworkPostService.updatePost(user, postId, artworkPostUpdateRequest);
 	}
 
 	/**
