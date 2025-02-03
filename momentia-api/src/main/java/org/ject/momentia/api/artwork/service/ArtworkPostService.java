@@ -102,7 +102,7 @@ public class ArtworkPostService {
 	}
 
 	@Transactional
-	public void updatePost(User user, Long postId, ArtworkPostUpdateRequest updateRequest) {
+	public ArtworkPostIdResponse updatePost(User user, Long postId, ArtworkPostUpdateRequest updateRequest) {
 		ArtworkPost artworkPost = artworkPostRepository.findById(postId)
 			.orElseThrow(ErrorCd.ARTWORK_POST_NOT_FOUND::serviceException);
 		if (user == null || !Objects.equals(artworkPost.getUser().getId(), user.getId()))
@@ -110,6 +110,7 @@ public class ArtworkPostService {
 		artworkPost.updatePost(updateRequest.status(), updateRequest.artworkField(), updateRequest.title(),
 			updateRequest.explanation());
 		artworkPostRepository.save(artworkPost);
+		return new ArtworkPostIdResponse(artworkPost.getId());
 	}
 
 	@Transactional

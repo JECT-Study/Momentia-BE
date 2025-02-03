@@ -51,6 +51,7 @@ public class ArtworkPostConverter {
 			.commentCount(artworkPost.getCommentCount())
 			.createdTime(artworkPost.getCreatedAt())
 			.artworkField(artworkPost.getCategory().getKoreanName())
+			.status(artworkPost.getStatus().name())
 
 			.userId(artworkPost.getUser().getId())
 			.userField(
