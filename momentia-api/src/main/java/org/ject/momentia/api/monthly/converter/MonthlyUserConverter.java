@@ -4,7 +4,7 @@ import org.ject.momentia.api.monthly.model.UserListModel;
 import org.ject.momentia.common.domain.user.User;
 
 public class MonthlyUserConverter {
-	public static UserListModel toUserListModel(User user, String profileImage, String artworkImage, Boolean isFollow) {
+	public static UserListModel toUserListModel(User user, String artworkImage, Boolean isFollow) {
 		return UserListModel.builder()
 			.userId(user.getId())
 			.artworkImage(artworkImage)
@@ -12,7 +12,7 @@ public class MonthlyUserConverter {
 			.userField(user.getField() == null ? null : user.getField().getKoreanName())
 			.introduction(user.getIntroduction())
 			.isFollow(isFollow)
-			.profileImage(profileImage)
+			.profileImage(user.getProfileImage() == null ? null : user.getProfileImage().getImageSrc())
 			.build();
 	}
 }

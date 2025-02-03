@@ -6,7 +6,7 @@ import org.ject.momentia.common.domain.user.User;
 
 public class ArtworkCommentConverter {
 
-	public static ArtworkCommentModel ArtworkCommentToArtworkCommentModel(ArtworkComment comment, String imageUrl,
+	public static ArtworkCommentModel ArtworkCommentToArtworkCommentModel(ArtworkComment comment,
 		User user) {
 		boolean isMine = false;
 		if (user != null)
@@ -16,7 +16,8 @@ public class ArtworkCommentConverter {
 			.userId(comment.getUser().getId())
 			.content(comment.getContent())
 			.isMine(isMine)
-			.profileImage(imageUrl)
+			.profileImage(
+				comment.getUser().getProfileImage() == null ? null : comment.getUser().getProfileImage().getImageSrc())
 			.createdTime(comment.getCreatedAt())
 			.nickname(comment.getUser().getNickname())
 			.build();
