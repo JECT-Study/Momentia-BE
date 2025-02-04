@@ -85,7 +85,7 @@ public class ArtworkPost extends BaseEntity {
 		if (title != null)
 			this.title = title;
 		if (explanation != null)
-			this.explanation = explanation;
+			this.explanation = explanation.isBlank() ? null : explanation;
 	}
 
 	public void increaseLikeCount() {
