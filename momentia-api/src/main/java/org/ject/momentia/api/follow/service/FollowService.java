@@ -1,10 +1,8 @@
 package org.ject.momentia.api.follow.service;
 
-import java.util.List;
-
 import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.api.follow.converter.FollowConverter;
-import org.ject.momentia.api.follow.model.FollowInfo;
+import org.ject.momentia.api.follow.model.FollowResponse;
 import org.ject.momentia.api.follow.model.FollowUserRequest;
 import org.ject.momentia.api.follow.repository.FollowRepository;
 import org.ject.momentia.api.follow.service.module.FollowModuleService;
@@ -30,7 +28,7 @@ public class FollowService {
 	public void follow(User user, FollowUserRequest followingId) {
 		User followingUser = accountService.findByIdElseThrowException(followingId.userId());
 		FollowId id = FollowConverter.toFollowId(user, followingUser);
-		if (followModule.isFollowing(user, followingUser))
+		if (followModule.isFollowing(user, followingUser, false))
 			throw ErrorCd.ALREADY_FOLLOW.serviceException();
 		followRepository.save(FollowConverter.toFollow(id));
 
@@ -44,7 +42,7 @@ public class FollowService {
 	public void unfollow(User user, FollowUserRequest followingId) {
 		User followingUser = accountService.findByIdElseThrowException(followingId.userId());
 		FollowId id = FollowConverter.toFollowId(user, followingUser);
-		if (!followModule.isFollowing(user, followingUser))
+		if (!followModule.isFollowing(user, followingUser, false))
 			throw ErrorCd.FOLLOW_NOT_FOUND.serviceException();
 		followRepository.deleteById(id);
 
@@ -55,9 +53,9 @@ public class FollowService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<FollowInfo> getSocialRelationInfo(Long userId, boolean isFollowing) {
+	public FollowResponse getSocialRelationInfo(Long userId, boolean isFollowing, User selfUser) {
 		var user = accountService.findByIdElseThrowException(userId);
-		return isFollowing ? followRepository.findFollowingUsersInfo(user) :
-			followRepository.findFollowerUsersInfo(user);
+		return new FollowResponse(isFollowing ? followRepository.findFollowingUsersInfo(user, selfUser) :
+			followRepository.findFollowerUsersInfo(user, selfUser));
 	}
 }

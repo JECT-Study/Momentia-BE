@@ -77,11 +77,11 @@ public class ArtworkPostService {
 
 		boolean isMine = user != null && Objects.equals(user.getId(), artworkPost.getUser().getId());
 		boolean isLiked = artworkLikeService.isLiked(user, artworkPost);
-		boolean isFollow = followService.isFollowing(user, artworkPost.getUser());
+		Boolean isFollow = followService.isFollowing(user, artworkPost.getUser(), true);
 
 		String postImage = imageService.getImageUrl(ImageTargetType.ARTWORK, artworkPost.getId());
-		String profileImage = artworkPost.getUser().getProfileImage() != null ?
-			imageService.getImageUrl(ImageTargetType.PROFILE, artworkPost.getUser().getId()) : null;
+		// String profileImage = artworkPost.getUser().getProfileImage() != null ?
+		// 	imageService.getImageUrl(ImageTargetType.PROFILE, artworkPost.getUser().getId()) : null;
 
 		return ArtworkPostConverter.toArtworkPostResponse(artworkPost, isMine, isLiked, postImage, isFollow);
 	}

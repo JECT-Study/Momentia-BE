@@ -16,7 +16,7 @@ public record UserInfo(
 	@PositiveOrZero int followingCount,
 	@NotNull String userField,
 	String introduction,
-	boolean isFollow
+	Boolean isFollow
 ) {
 
 }
