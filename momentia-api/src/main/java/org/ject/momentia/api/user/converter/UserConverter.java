@@ -32,7 +32,7 @@ public class UserConverter {
 			.build();
 	}
 
-	public static UserInfo toUserInfo(User user, boolean isMine, boolean isFollow) {
+	public static UserInfo toUserInfo(User user, boolean isMine, Boolean isFollow) {
 		return UserInfo.builder()
 			.userId(user.getId())
 			.nickname(user.getNickname())
