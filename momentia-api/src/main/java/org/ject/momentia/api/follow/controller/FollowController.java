@@ -1,8 +1,6 @@
 package org.ject.momentia.api.follow.controller;
 
-import java.util.List;
-
-import org.ject.momentia.api.follow.model.FollowInfo;
+import org.ject.momentia.api.follow.model.FollowResponse;
 import org.ject.momentia.api.follow.model.FollowUserRequest;
 import org.ject.momentia.api.follow.service.FollowService;
 import org.ject.momentia.api.mvc.annotation.MomentiaUser;
@@ -40,13 +38,13 @@ public class FollowController {
 
 	@GetMapping("/{userId}/followingList")
 	@ResponseStatus(HttpStatus.OK)
-	public List<FollowInfo> getUserFollowingList(@PathVariable Long userId) {
-		return followService.getSocialRelationInfo(userId, true);
+	public FollowResponse getUserFollowingList(@PathVariable Long userId, @MomentiaUser User user) {
+		return followService.getSocialRelationInfo(userId, true, user);
 	}
 
 	@GetMapping("/{userId}/followerList")
 	@ResponseStatus(HttpStatus.OK)
-	public List<FollowInfo> getUserFollwerList(@PathVariable Long userId) {
-		return followService.getSocialRelationInfo(userId, false);
+	public FollowResponse getUserFollowerList(@PathVariable Long userId, @MomentiaUser User user) {
+		return followService.getSocialRelationInfo(userId, false, user);
 	}
 }

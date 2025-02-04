@@ -7,6 +7,7 @@ public record FollowInfo(
 	@Positive Long userId,
 	String profileImage,
 	@NotEmpty String nickname,
-	String introduction
+	String introduction,
+	Boolean isFollow
 ) {
 }

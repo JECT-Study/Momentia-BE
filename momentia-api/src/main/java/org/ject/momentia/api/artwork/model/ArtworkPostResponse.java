@@ -20,7 +20,7 @@ public record ArtworkPostResponse(
 	String profileImage,
 	String nickname,
 	String userField,
-	boolean isFollow,
+	Boolean isFollow,
 	String introduction,
 	String status,
 	boolean isMine //  본인 작품인지 여부
