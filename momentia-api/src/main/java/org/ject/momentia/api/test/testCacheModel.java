@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@RedisHash(value = "testCacheModel")
+@RedisHash(value = "testCacheModel", timeToLive = 60L)
 public class testCacheModel {
 	@Id
 	Long num;

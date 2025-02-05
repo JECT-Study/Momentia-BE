@@ -144,10 +144,21 @@ public class ArtworkController {
 	 */
 	@GetMapping("/redis/{num}")
 	@ResponseStatus(HttpStatus.OK)
-	public String getLikePostList(@PathVariable Long num) {
+	public String getTestCache(@PathVariable Long num) {
 		if (testRepository.findById(num).isPresent()) {
 			return "기존 - " + testRepository.findById(num).get().getName();
 		} else
 			return "새로 생성 - " + testRepository.save(new testCacheModel(num, "name" + num)).getName();
+	}
+
+	@GetMapping("/redis/{num}/delete")
+	@ResponseStatus(HttpStatus.OK)
+	public String deleteTestCache(@PathVariable Long num) {
+		if (testRepository.findById(num).isEmpty()) {
+			return "없음";
+		} else {
+			testRepository.deleteById(num);
+			return "삭제 완료";
+		}
 	}
 }
