@@ -12,6 +12,7 @@ spring:
       hibernate.jdbc.time_zone: Asia/Seoul
   data:
     redis:
+      type: CLUSTER
       host: ${MOMENTIA_ENV_REDIS_HOST}
       port: ${MOMENTIA_ENV_REDIS_PORT}
       password: ${MOMENTIA_ENV_REDIS_PASSWORD}
