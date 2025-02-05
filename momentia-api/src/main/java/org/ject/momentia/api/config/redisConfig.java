@@ -11,7 +11,9 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 
 @Configuration
 @EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP,
-	shadowCopy = RedisKeyValueAdapter.ShadowCopy.OFF)
+	shadowCopy = RedisKeyValueAdapter.ShadowCopy.OFF,
+	keyspaceNotificationsConfigParameter = ""
+)
 public class redisConfig {
 	@Value("${spring.data.redis.host}")
 	private String host;
