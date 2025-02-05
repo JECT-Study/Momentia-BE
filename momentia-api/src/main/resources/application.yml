@@ -15,7 +15,8 @@ spring:
       host: ${MOMENTIA_ENV_REDIS_HOST}
       port: ${MOMENTIA_ENV_REDIS_PORT}
       password: ${MOMENTIA_ENV_REDIS_PASSWORD}
-
+      cluster:
+        nodes: ${MOMENTIA_ENV_CLUSTER_NODES}
 
 api-client:
   kakao:
