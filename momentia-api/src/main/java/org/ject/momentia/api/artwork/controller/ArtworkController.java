@@ -8,6 +8,7 @@ import org.ject.momentia.api.artwork.model.ArtworkPostResponse;
 import org.ject.momentia.api.artwork.model.ArtworkPostUpdateRequest;
 import org.ject.momentia.api.artwork.model.type.ArtworkPostSort;
 import org.ject.momentia.api.artwork.service.ArtworkPostService;
+import org.ject.momentia.api.config.CookieUtil;
 import org.ject.momentia.api.mvc.annotation.EnumValue;
 import org.ject.momentia.api.mvc.annotation.MomentiaUser;
 import org.ject.momentia.api.pagination.model.PaginationResponse;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -55,8 +58,39 @@ public class ArtworkController {
 	 */
 	@GetMapping("/post/{postId}")
 	@ResponseStatus(HttpStatus.OK)
-	public ArtworkPostResponse getPost(@MomentiaUser User user, @PathVariable Long postId) {
-		return artworkPostService.getPost(user, postId);
+	public ArtworkPostResponse getPost(@MomentiaUser User user, @PathVariable Long postId
+	) {
+		return artworkPostService.getPost(user, postId, true);
+	}
+
+	/**
+	 * [GET] 작품 상세 보기 - 쿠키 설정 테스트
+	 */
+	@GetMapping("/post2/{postId}")
+	@ResponseStatus(HttpStatus.OK)
+	public ArtworkPostResponse getPostWithCookie(@MomentiaUser User user, @PathVariable Long postId
+		, HttpServletRequest request, HttpServletResponse response
+	) {
+		// 게시글을 본 적이 없으면 쿠키에 추가하고 업데이트
+		boolean updateView = updateViewedPosts(postId, request, response);
+
+		return artworkPostService.getPost(user, postId, updateView);
+	}
+
+	private boolean updateViewedPosts(Long postId, HttpServletRequest request, HttpServletResponse response) {
+		String cookieName = "viewed_posts";
+		int cookieExpireTime = 60; // 1분
+		String viewedPosts = CookieUtil.getCookieValue(request, cookieName).orElse("");
+
+		// 게시글을 본 적이 없으면
+		boolean isNewPost = !viewedPosts.contains(":" + postId + ":");
+
+		if (isNewPost) {
+			viewedPosts += ":" + postId + ":";
+			CookieUtil.addCookie(response, cookieName, viewedPosts, cookieExpireTime);
+		}
+
+		return isNewPost; // 게시글이 처음이면 true 반환
 	}
 
 	/**

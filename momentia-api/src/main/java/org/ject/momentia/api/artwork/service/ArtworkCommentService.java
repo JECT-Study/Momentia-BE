@@ -11,6 +11,7 @@ import org.ject.momentia.api.artwork.model.ArtworkCommentListResponse;
 import org.ject.momentia.api.artwork.model.ArtworkCommentModel;
 import org.ject.momentia.api.artwork.model.ArtworkCommentRequest;
 import org.ject.momentia.api.artwork.repository.ArtworkCommentRepository;
+import org.ject.momentia.api.artwork.repository.cache.ArtworkPostCacheRepository;
 import org.ject.momentia.api.artwork.service.module.ArtworkPostModuleService;
 import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.api.image.service.ImageService;
@@ -30,6 +31,7 @@ public class ArtworkCommentService {
 
 	private final ImageService imageService;
 	private final ArtworkPostModuleService artworkService;
+	private final ArtworkPostCacheRepository artworkPostCacheRepository;
 
 	@Transactional
 	public ArtworkCommentIdResponse createComment(User user, Long postId,
@@ -39,6 +41,7 @@ public class ArtworkCommentService {
 		comment = artworkCommentRepository.save(comment);
 
 		post.increaseCommentCount();
+		artworkPostCacheRepository.deleteById(post.getId());
 
 		return new ArtworkCommentIdResponse(comment.getId());
 	}
@@ -50,8 +53,9 @@ public class ArtworkCommentService {
 		if (user == null || !comment.getUser().getId().equals(user.getId()))
 			throw ErrorCd.NO_PERMISSION.serviceException();
 		artworkCommentRepository.delete(comment);
-
 		comment.getPost().decreaseCommentCount();
+
+		artworkPostCacheRepository.deleteById(comment.getPost().getId());
 	}
 
 	@Transactional

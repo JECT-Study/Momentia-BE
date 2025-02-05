@@ -10,6 +10,7 @@ import org.ject.momentia.api.artwork.model.ArtworkPostModel;
 import org.ject.momentia.api.artwork.model.ArtworkPostResponse;
 import org.ject.momentia.api.artwork.model.FollowingUserModel;
 import org.ject.momentia.api.artwork.model.FollowingUserPostProjection;
+import org.ject.momentia.api.artwork.repository.cache.model.ArtworkPostCacheModel;
 import org.ject.momentia.common.domain.artwork.ArtworkComment;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.artwork.type.ArtworkPostStatus;
@@ -87,6 +88,7 @@ public class ArtworkPostConverter {
 			.title(artworkPost.getTitle())
 			.userId(artworkPost.getUser().getId())
 			.commentCount(artworkPost.getCommentCount())
+			.likeCount(artworkPost.getLikeCount())
 			.status(artworkPost.getStatus().name())
 			.build();
 	}
@@ -116,4 +118,20 @@ public class ArtworkPostConverter {
 			.build();
 	}
 
+	public static ArtworkPostModel ArtworkPostCacheModeltoArtworkPostModel(ArtworkPostCacheModel artworkPostCacheModel,
+		Boolean isLiked, String nickname) {
+		return ArtworkPostModel.builder()
+			.postId(artworkPostCacheModel.getId())
+			.title(artworkPostCacheModel.getTitle())
+			.postImage(artworkPostCacheModel.getImageUrl())
+			.userId(artworkPostCacheModel.getUserId())
+			.nickname(nickname)
+			.viewCount(artworkPostCacheModel.getViewCount())
+			.commentCount(artworkPostCacheModel.getCommentCount())
+			.likeCount(artworkPostCacheModel.getLikeCount())
+			.isLiked(isLiked)
+			.status(artworkPostCacheModel.getStatus().name())
+			.build();
+
+	}
 }

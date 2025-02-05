@@ -42,6 +42,24 @@ public interface ArtworkPostRepository extends JpaRepository<ArtworkPost, Long> 
 		Pageable pageable
 	);
 
+	@Query("SELECT p.id FROM ArtworkPost p LEFT JOIN p.user u " +
+		"WHERE (:category IS NULL OR p.category = :category) " +
+		"AND p.status = 'PUBLIC' ")
+	Page<Long> findByIdListCategoryAndStatus(
+		@Param("category") Category category,
+		Pageable pageable
+	);
+
+	@Query("SELECT p.id FROM ArtworkPost p LEFT JOIN p.user u " +
+		"WHERE (:category IS NULL OR p.category = :category) " +
+		"AND p.status = 'PUBLIC' " +
+		"AND (REPLACE(p.title, ' ', '') LIKE %:keyword% OR REPLACE(u.nickname, ' ', '') LIKE %:keyword%)")
+	Page<Long> findByIdListCategoryAndStatusAndKeyword(
+		@Param("category") Category category,
+		@Param("keyword") String keyword,
+		Pageable pageable
+	);
+
 	@Query(value = """
 		    SELECT *
 		    FROM (
