@@ -8,9 +8,10 @@ import org.ject.momentia.api.image.converter.TempImageConverter;
 import org.ject.momentia.api.image.infra.S3Resolver;
 import org.ject.momentia.api.image.model.StartUploadRequest;
 import org.ject.momentia.api.image.model.StartUploadResponse;
-import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.ject.momentia.api.image.repository.ImageRepository;
 import org.ject.momentia.api.image.repository.TempImageRepository;
+import org.ject.momentia.common.domain.image.Image;
+import org.ject.momentia.common.domain.image.type.ImageTargetType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,19 +48,35 @@ public class ImageService {
 	}
 
 	@Transactional
-	public void useImageToService(Long imageId, ImageTargetType targetType, Long targetId) {
+	public Image useImageToService(Long imageId, ImageTargetType targetType, Long targetId) {
 		var tempImage = tempImageRepository.findById(imageId)
 			.orElseThrow(ErrorCd.IMAGE_NOT_FOUND::serviceException);
 
 		var image = ImageConverter.ofTempImage(tempImage, targetType, targetId);
 		imageRepository.save(image);
 		tempImageRepository.delete(tempImage);
+
+		return image;
 	}
 
 	public String getImageUrl(ImageTargetType targetType, Long targetId) {
 		var image = imageRepository.findByTargetTypeAndTargetId(targetType, targetId)
-				.orElseThrow(ErrorCd.IMAGE_NOT_FOUND::serviceException);
+			.orElseThrow(ErrorCd.IMAGE_NOT_FOUND::serviceException);
 		return image.getImageSrc();
+	}
+
+	public Image validateActiveImage(Long imageId) {
+		return imageRepository.findById(imageId)
+			.orElseThrow(ErrorCd.IMAGE_NOT_FOUND::serviceException);
+	}
+
+	public void validateTempImage(Long imageId, boolean isActive) {
+		var tempImage = tempImageRepository.findById(imageId)
+			.orElseThrow(ErrorCd.IMAGE_NOT_FOUND::serviceException);
+
+		if (isActive && !tempImage.isUploaded()) {
+			throw ErrorCd.IMAGE_NOT_UPLOADED.serviceException();
+		}
 	}
 
 	private String createKey() {

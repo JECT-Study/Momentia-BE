@@ -41,7 +41,7 @@ public class ArtworkPostConverter {
 	}
 
 	public static ArtworkPostResponse toArtworkPostResponse(ArtworkPost artworkPost, boolean isMine, boolean isLiked,
-		String imageUrl, Boolean isFollow, String profileImage) {
+		String imageUrl, Boolean isFollow) {
 		return ArtworkPostResponse.builder()
 			.postId(artworkPost.getId())
 			.postImage(imageUrl)
@@ -52,6 +52,7 @@ public class ArtworkPostConverter {
 			.commentCount(artworkPost.getCommentCount())
 			.createdTime(artworkPost.getCreatedAt())
 			.artworkField(artworkPost.getCategory().getKoreanName())
+			.status(artworkPost.getStatus().name())
 
 			.userId(artworkPost.getUser().getId())
 			.userField(
@@ -59,7 +60,8 @@ public class ArtworkPostConverter {
 			.nickname(artworkPost.getUser().getNickname())
 			.introduction(artworkPost.getUser().getIntroduction())
 			.isFollow(isFollow)
-			.profileImage(profileImage)
+			.profileImage(artworkPost.getUser().getProfileImage() == null ? null :
+				artworkPost.getUser().getProfileImage().getImageSrc())
 
 			.isMine(isMine)
 			.isLiked(isLiked)
@@ -90,28 +92,11 @@ public class ArtworkPostConverter {
 			.build();
 	}
 
-	public static ArtworkPostModel ArtworkPostCacheModeltoArtworkPostModel(ArtworkPostCacheModel artworkPost,
-		Boolean isLiked, String nickname) {
-		return ArtworkPostModel.builder()
-			.postId(artworkPost.getId())
-			.postImage(artworkPost.getImageUrl())
-			.viewCount(artworkPost.getViewCount())
-			.nickname(nickname)
-			.likeCount(artworkPost.getLikeCount())
-			.isLiked(isLiked)
-			.likeCount(artworkPost.getLikeCount())
-			.title(artworkPost.getTitle())
-			.userId(artworkPost.getUserId())
-			.commentCount(artworkPost.getCommentCount())
-			.status(artworkPost.getStatus().name())
-			.build();
-	}
-
-	public static FollowingUserModel toFollowingUserModel(User user, String imageUrl) {
+	public static FollowingUserModel toFollowingUserModel(User user) {
 		return FollowingUserModel.builder()
 			.userId(user.getId())
 			.nickname(user.getNickname())
-			.userImage(imageUrl)
+			.userImage(user.getProfileImage() == null ? null : user.getProfileImage().getImageSrc())
 			.isFollow(true) // 팔로잉한 유저에서 가져온 데이터 이므로 무조건 true로 반환
 			.userField(user.getField() == null ? null : user.getField().getKoreanName())
 			.posts(new ArrayList<>())
@@ -131,5 +116,6 @@ public class ArtworkPostConverter {
 			.createdTime(artworkPost.getCreatedAt())
 			.build();
 	}
+
 
 }

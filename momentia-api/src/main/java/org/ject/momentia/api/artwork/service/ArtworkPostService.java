@@ -23,6 +23,7 @@ import org.ject.momentia.api.artwork.repository.cache.PageIdsCacheRepository;
 import org.ject.momentia.api.artwork.repository.cache.model.ArtworkPostCacheModel;
 import org.ject.momentia.api.artwork.repository.cache.model.ArtworkViewCacheModel;
 import org.ject.momentia.api.artwork.repository.cache.model.PageIdsCacheModel;
+import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
 import org.ject.momentia.api.artwork.service.module.ArtworkCommentModuleService;
 import org.ject.momentia.api.artwork.service.module.ArtworkLikeModuleService;
 import org.ject.momentia.api.collection.service.module.CollectionArtworkModuleService;
@@ -35,6 +36,8 @@ import org.ject.momentia.api.pagination.model.PaginationResponse;
 import org.ject.momentia.api.pagination.model.PaginationWithIsMineResponse;
 import org.ject.momentia.api.user.repository.UserRepository;
 import org.ject.momentia.api.user.service.UserService;
+import org.ject.momentia.api.pagination.model.PaginationWithIsMineResponse;
+import org.ject.momentia.api.user.repository.UserRepository;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.artwork.type.ArtworkPostStatus;
 import org.ject.momentia.common.domain.artwork.type.Category;
@@ -99,7 +102,7 @@ public class ArtworkPostService {
 
 		boolean isMine = user != null && Objects.equals(user.getId(), artworkPost.getUser().getId());
 		boolean isLiked = artworkLikeService.isLiked(user, artworkPost);
-		boolean isFollow = followService.isFollowing(user, artworkPost.getUser());
+		boolean isFollow = followService.isFollowing(user, artworkPost.getUser(),true);
 
 		String postImage = imageService.getImageUrl(ImageTargetType.ARTWORK, artworkPost.getId());
 		String profileImage = artworkPost.getUser().getProfileImage() != null ?
@@ -116,7 +119,7 @@ public class ArtworkPostService {
 		}
 
 		return ArtworkPostConverter.toArtworkPostResponse(artworkPost, isMine, isLiked, postImage, isFollow,
-			profileImage);
+			);
 	}
 
 	@Transactional
@@ -138,7 +141,7 @@ public class ArtworkPostService {
 	}
 
 	@Transactional
-	public void updatePost(User user, Long postId, ArtworkPostUpdateRequest updateRequest) {
+	public ArtworkPostIdResponse updatePost(User user, Long postId, ArtworkPostUpdateRequest updateRequest) {
 		ArtworkPost artworkPost = artworkPostRepository.findById(postId)
 			.orElseThrow(ErrorCd.ARTWORK_POST_NOT_FOUND::serviceException);
 		if (user == null || !Objects.equals(artworkPost.getUser().getId(), user.getId()))
@@ -147,6 +150,7 @@ public class ArtworkPostService {
 			updateRequest.explanation());
 		artworkPostRepository.save(artworkPost);
 		artworkPostCacheRepository.deleteById(artworkPost.getId());
+		return new ArtworkPostIdResponse(artworkPost.getId());
 	}
 
 	@Transactional
@@ -215,44 +219,6 @@ public class ArtworkPostService {
 		);
 	}
 
-	//
-	// @Transactional
-	// public PaginationResponse<ArtworkPostModel> getPostList(User user, String sort, String keyword, Integer page,
-	// 	Integer size, String categoryName) {
-	// 	Category category = (categoryName == null) ? null : Category.valueOf(categoryName);
-	// 	String sortBy = ArtworkPostSort.valueOf(sort.toUpperCase()).getColumnName();
-	// 	Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
-	// 	if (keyword != null && (keyword = keyword.trim().replaceAll(" ", "")).isBlank())
-	// 		keyword = null;
-	//
-	// 	Page<ArtworkPost> posts;
-	//
-	// 	// 검색 할 경우
-	// 	if (keyword != null)
-	// 		posts = artworkPostRepository.search(category, keyword, pageable);
-	// 	else {
-	// 		posts = (category != null)
-	// 			? artworkPostRepository.findByCategoryAndStatus(category, ArtworkPostStatus.PUBLIC, pageable)
-	// 			: artworkPostRepository.findByStatus(ArtworkPostStatus.PUBLIC, pageable);
-	// 	}
-	//
-	// 	List<ArtworkPostModel> postModelList = posts.getContent().stream()
-	// 		.map((p) -> {
-	// 				String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK, p.getId());
-	// 				Boolean isLiked = artworkLikeService.isLiked(user, p);
-	// 				return ArtworkPostConverter.toArtworkPostModel(p, isLiked, imageUrl);
-	// 			}
-	// 		)
-	// 		.toList();
-	//
-	// 	PaginationModel paginationResponse = PaginationConverter.pageToPaginationModel(posts);
-	//
-	// 	return new PaginationResponse<>(
-	// 		postModelList,
-	// 		paginationResponse
-	// 	);
-	// }
-
 	@Transactional
 	public ArtworkFollowingUserPostsResponse getFollowingUserPosts(User user) {
 		if (user == null)
@@ -267,7 +233,7 @@ public class ArtworkPostService {
 			String imageUrl = null;
 			if (u.getProfileImage() != null)
 				imageUrl = imageService.getImageUrl(ImageTargetType.PROFILE, u.getId());
-			return ArtworkPostConverter.toFollowingUserModel(u, imageUrl);
+			return ArtworkPostConverter.toFollowingUserModel(u);
 		}).collect(Collectors.toList());
 
 		Iterator<FollowingUserModel> iterator = userModelList.iterator();

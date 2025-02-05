@@ -23,24 +23,9 @@ public class ArtworkLikeModuleService {
 	private final ArtworkLikeRepository artworkLikeRepository;
 	private final ArtworkLikeCacheRepository artworkLikeCacheRepository;
 
-	// public Boolean isLiked(User user, ArtworkPost post) {
-	// 	return user != null && artworkLikeRepository.existsById(new ArtworkLikeId(user, post));
-	// }
-	public Boolean isLiked(User user, ArtworkPost post) {
-		if (user == null) {
-			return false;
-		}
-
-		// Redis에서 확인
-		Optional<ArtworkLikeCacheModel> cache = artworkLikeCacheRepository.findById(post.getId());
-		if (cache.isPresent() && cache.get().hasLiked(user.getId())) {
-			return true;
-		}
-
-		// 없으면 DB 조회
-		return artworkLikeRepository.existsById(new ArtworkLikeId(user, post));
-
-	}
+    public Boolean isLiked(User user, ArtworkPost post){
+        return user != null && artworkLikeRepository.existsById(new ArtworkLikeId(user, post));
+    }
 
 	// public Boolean isLikedByPostId(User user, Long postId) {
 	// 	return user != null && artworkLikeRepository.existsByPostIdAndUserId(postId, user);

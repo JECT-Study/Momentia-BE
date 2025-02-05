@@ -4,9 +4,9 @@ import lombok.Builder;
 
 @Builder
 public record CollectionListModel(
-        Long collectionId,
-        String collectionImage,
-        String name,
-        String status
+	Long collectionId,
+	String collectionImage,
+	String name,
+	String status
 ) {
 }
