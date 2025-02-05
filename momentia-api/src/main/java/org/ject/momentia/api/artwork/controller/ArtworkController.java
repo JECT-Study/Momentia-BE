@@ -12,6 +12,8 @@ import org.ject.momentia.api.mvc.annotation.EnumValue;
 import org.ject.momentia.api.mvc.annotation.MomentiaUser;
 import org.ject.momentia.api.pagination.model.PaginationResponse;
 import org.ject.momentia.api.pagination.model.PaginationWithIsMineResponse;
+import org.ject.momentia.api.test.testCacheModel;
+import org.ject.momentia.api.test.testCacheRepository;
 import org.ject.momentia.common.domain.artwork.type.Category;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.http.HttpStatus;
@@ -36,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 public class ArtworkController {
 
 	private final ArtworkPostService artworkPostService;
+	private final testCacheRepository testRepository;
 
 	/**
 	 * [POST] 작품 업로드
@@ -136,4 +139,15 @@ public class ArtworkController {
 		return artworkPostService.getLikePosts(sort, page, size, user);
 	}
 
+	/**
+	 * 테스트 용 API
+	 */
+	@GetMapping("/redis/{num}")
+	@ResponseStatus(HttpStatus.OK)
+	public String getLikePostList(@PathVariable Long num) {
+		if (testRepository.findById(num).isPresent()) {
+			return "기존 - " + testRepository.findById(num).get().getName();
+		} else
+			return "새로 생성 - " + testRepository.save(new testCacheModel(num, "name" + num)).getName();
+	}
 }
