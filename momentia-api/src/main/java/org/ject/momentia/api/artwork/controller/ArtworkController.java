@@ -140,7 +140,7 @@ public class ArtworkController {
 	}
 
 	/**
-	 * 테스트 용 API
+	 * 테스트 용 API - 추후 삭제
 	 */
 	@GetMapping("/redis/{num}")
 	@ResponseStatus(HttpStatus.OK)
@@ -151,6 +151,9 @@ public class ArtworkController {
 			return "새로 생성 - " + testRepository.save(new testCacheModel(num, "name" + num)).getName();
 	}
 
+	/**
+	 * 테스트 용 API - 추후 삭제
+	 */
 	@GetMapping("/redis/{num}/delete")
 	@ResponseStatus(HttpStatus.OK)
 	public String deleteTestCache(@PathVariable Long num) {
