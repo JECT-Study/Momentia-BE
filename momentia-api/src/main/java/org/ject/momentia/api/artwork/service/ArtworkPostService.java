@@ -23,7 +23,6 @@ import org.ject.momentia.api.artwork.repository.cache.PageIdsCacheRepository;
 import org.ject.momentia.api.artwork.repository.cache.model.ArtworkPostCacheModel;
 import org.ject.momentia.api.artwork.repository.cache.model.ArtworkViewCacheModel;
 import org.ject.momentia.api.artwork.repository.cache.model.PageIdsCacheModel;
-import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
 import org.ject.momentia.api.artwork.service.module.ArtworkCommentModuleService;
 import org.ject.momentia.api.artwork.service.module.ArtworkLikeModuleService;
 import org.ject.momentia.api.collection.service.module.CollectionArtworkModuleService;
@@ -33,9 +32,6 @@ import org.ject.momentia.api.image.service.ImageService;
 import org.ject.momentia.api.pagination.converter.PaginationConverter;
 import org.ject.momentia.api.pagination.model.PaginationModel;
 import org.ject.momentia.api.pagination.model.PaginationResponse;
-import org.ject.momentia.api.pagination.model.PaginationWithIsMineResponse;
-import org.ject.momentia.api.user.repository.UserRepository;
-import org.ject.momentia.api.user.service.UserService;
 import org.ject.momentia.api.pagination.model.PaginationWithIsMineResponse;
 import org.ject.momentia.api.user.repository.UserRepository;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
@@ -66,20 +62,8 @@ public class ArtworkPostService {
 	private final ArtworkLikeModuleService artworkLikeService;
 	private final ArtworkCommentModuleService artworkCommentService;
 	private final ArtworkPostCacheRepository artworkPostCacheRepository;
-	//Map<String, Page<Long>> idsListMap = new HashMap<>();
-	// 동시성 문제
-	// Map<String, Page<Long>> idsListMap = new LinkedHashMap<>(16, 0.75f, true) {
-	// 	@Override
-	// 	protected boolean removeEldestEntry(Map.Entry<String, Page<Long>> eldest) {
-	// 		return size() > 100; // 최대 100개의 항목만 유지
-	// 	}
-	// };
 
-	//private Map<String, Page<Long>> idsListMap = new ConcurrentHashMap<>();
-
-	private final PostListCacheService postListCacheService;
 	private final PageIdsCacheRepository pageIdsCacheRepository;
-	private final UserService userService;
 	private final ArtworkViewCacheRepository artworkViewCacheRepository;
 
 	@Transactional
@@ -102,11 +86,9 @@ public class ArtworkPostService {
 
 		boolean isMine = user != null && Objects.equals(user.getId(), artworkPost.getUser().getId());
 		boolean isLiked = artworkLikeService.isLiked(user, artworkPost);
-		boolean isFollow = followService.isFollowing(user, artworkPost.getUser(),true);
+		Boolean isFollow = followService.isFollowing(user, artworkPost.getUser(), true);
 
 		String postImage = imageService.getImageUrl(ImageTargetType.ARTWORK, artworkPost.getId());
-		String profileImage = artworkPost.getUser().getProfileImage() != null ?
-			imageService.getImageUrl(ImageTargetType.PROFILE, artworkPost.getUser().getId()) : null;
 
 		if (updateView) {
 			ArtworkViewCacheModel artworkViewCacheModel = artworkViewCacheRepository.findById(artworkPost.getId())
@@ -118,8 +100,7 @@ public class ArtworkPostService {
 			artworkViewCacheRepository.save(artworkViewCacheModel);
 		}
 
-		return ArtworkPostConverter.toArtworkPostResponse(artworkPost, isMine, isLiked, postImage, isFollow,
-			);
+		return ArtworkPostConverter.toArtworkPostResponse(artworkPost, isMine, isLiked, postImage, isFollow);
 	}
 
 	@Transactional
@@ -156,47 +137,65 @@ public class ArtworkPostService {
 	@Transactional
 	public PaginationResponse<ArtworkPostModel> getPostList(User user, String sort, String keyword, Integer page,
 		Integer size, String categoryName) {
-		Category category = (categoryName == null) ? null : Category.valueOf(categoryName);
-		String sortBy = ArtworkPostSort.valueOf(sort.toUpperCase()).getColumnName();
-		Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy, "id").descending());
-		if (keyword != null && (keyword = keyword.trim().replaceAll(" ", "")).isBlank())
-			keyword = null;
 
-		String key =
-			"artworkPostList:sort:" + sortBy + ":keyword:" + keyword + ":page:" + page + ":size:" + size + ":category:"
-				+ (category == null ? null : category.name());
+		PageIdsCacheModel pageIdsCacheModel = getPageIdsCacheModel(sort, keyword, page, size, categoryName);
 
-		Page<Long> pages = null;
-		List<Long> ids = null;
-		PageIdsCacheModel pageIdsCacheModel = pageIdsCacheRepository.findById(key)
-			.orElse(null); //artworkPostRepository.search_id(category, keyword, pageable);
-		if (pageIdsCacheModel == null) {
-			if (keyword == null) {
-				pages = artworkPostRepository.findByIdListCategoryAndStatus(category, pageable);
-			} else {
-				pages = artworkPostRepository.findByIdListCategoryAndStatusAndKeyword(category, keyword, pageable);
-			}
-			pageIdsCacheModel = pageIdsCacheRepository.save(new PageIdsCacheModel(key, pages));
-			ids = pageIdsCacheModel.getIds();
-		} else {
-			ids = pageIdsCacheModel.getIds();
-		}
+		List<Long> ids = pageIdsCacheModel.getIds();
+
+		List<ArtworkPostModel> postModelList = IdListToArtworkPostModelList(ids, user);
 
 		PaginationModel paginationResponse = new PaginationModel(pageIdsCacheModel.getTotalDataCnt(),
 			pageIdsCacheModel.getTotalPages(),
 			pageIdsCacheModel.getIsLastPage(), pageIdsCacheModel.getIsFirstPage(), pageIdsCacheModel.getRequestPage(),
 			pageIdsCacheModel.getRequestSize());
 
+		return new PaginationResponse<>(
+			postModelList,
+			paginationResponse
+		);
+	}
+
+	private PageIdsCacheModel getPageIdsCacheModel(String sort, String keyword, Integer page, Integer size,
+		String categoryName) {
+
+		Category category = (categoryName == null) ? null : Category.valueOf(categoryName);
+		String sortBy = ArtworkPostSort.valueOf(sort.toUpperCase()).getColumnName();
+		Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy, "id").descending());
+		if (keyword != null && (keyword = keyword.trim().replaceAll(" ", "")).isBlank())
+			keyword = null;
+
+		String key = "artworkPostList:sort:" + sortBy + ":keyword:" + keyword + ":page:" + page + ":size:" + size
+			+ ":category:"
+			+ (category == null ? null : category.name());
+
+		Page<Long> pages;
+
+		/// 레디스에 키 값에 해당하는 id List 검색
+		PageIdsCacheModel pageIdsCacheModel = pageIdsCacheRepository.findById(key).orElse(null);
+
+		/// 캐시에 저장되어 있지 않다면, rdb에서 가져온다.
+		if (pageIdsCacheModel == null) {
+			if (keyword == null)
+				pages = artworkPostRepository.findByIdListCategoryAndStatus(category, pageable);
+			else
+				pages = artworkPostRepository.findByIdListCategoryAndStatusAndKeyword(category, keyword, pageable);
+			pageIdsCacheModel = pageIdsCacheRepository.save(new PageIdsCacheModel(key, pages));
+		}
+
+		return pageIdsCacheModel;
+
+	}
+
+	private List<ArtworkPostModel> IdListToArtworkPostModelList(List<Long> ids, User user) {
 		List<ArtworkPostModel> postModelList = ids.stream().map((id) -> {
+			/// Todo : idList 넘겨서 rdb 한번 찌르는 로직으로 수정
 
 			ArtworkPostCacheModel artworkPostCacheModel = artworkPostCacheRepository.findById(id).orElse(null);
-			// 없으면
+			// 작품이 캐시에 없다면
 			if (artworkPostCacheModel == null) {
-				// rdb 찌르기
 				ArtworkPost artworkPost = artworkPostRepository.findById(id).get();
 				String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK, artworkPost.getId());
 				Boolean isLiked = artworkLikeService.isLiked(user, artworkPost);
-				// 작품 캐시에 저장해야함
 				ArtworkPostCacheModel newArtworkPostCacheModel = new ArtworkPostCacheModel(artworkPost, imageUrl);
 				artworkPostCacheRepository.save(newArtworkPostCacheModel);
 				return ArtworkPostConverter.toArtworkPostModel(artworkPost, isLiked, imageUrl);
@@ -212,11 +211,7 @@ public class ArtworkPostService {
 			}
 
 		}).toList();
-
-		return new PaginationResponse<>(
-			postModelList,
-			paginationResponse
-		);
+		return postModelList;
 	}
 
 	@Transactional
@@ -230,9 +225,6 @@ public class ArtworkPostService {
 		List<FollowingUserPostProjection> lists = artworkPostRepository.findTwoRecentPostsByUserIds(ids);
 
 		List<FollowingUserModel> userModelList = userList.stream().map((u) -> {
-			String imageUrl = null;
-			if (u.getProfileImage() != null)
-				imageUrl = imageService.getImageUrl(ImageTargetType.PROFILE, u.getId());
 			return ArtworkPostConverter.toFollowingUserModel(u);
 		}).collect(Collectors.toList());
 

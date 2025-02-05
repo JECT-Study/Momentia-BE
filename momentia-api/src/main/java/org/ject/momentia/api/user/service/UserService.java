@@ -39,7 +39,7 @@ public class UserService {
 		}
 
 		var targetUser = accountService.findByIdElseThrowException(userId);
-		var isFollow = followModuleService.isFollowing(user, targetUser, true);
+		Boolean isFollow = followModuleService.isFollowing(user, targetUser, true);
 		return UserConverter.toUserInfo(targetUser, user != null && user.isMine(userId), isFollow);
 	}
 

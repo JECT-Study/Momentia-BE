@@ -104,4 +104,8 @@ public class ArtworkPost extends BaseEntity {
 		this.commentCount--;
 	}
 
+	public void increaseViewCount(Long view) {
+		this.viewCount += view;
+	}
+
 }

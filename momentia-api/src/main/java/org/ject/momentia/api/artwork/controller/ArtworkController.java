@@ -1,5 +1,6 @@
 package org.ject.momentia.api.artwork.controller;
 
+import org.ject.momentia.api.artwork.model.ArtworkFollowingUserPostsResponse;
 import org.ject.momentia.api.artwork.model.ArtworkPostCreateRequest;
 import org.ject.momentia.api.artwork.model.ArtworkPostIdResponse;
 import org.ject.momentia.api.artwork.model.ArtworkPostModel;
@@ -58,6 +59,16 @@ public class ArtworkController {
 	@GetMapping("/post/{postId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ArtworkPostResponse getPost(@MomentiaUser User user, @PathVariable Long postId
+	) {
+		return artworkPostService.getPost(user, postId, true);
+	}
+
+	/**
+	 * [GET] 작품 상세 보기 - 쿠키 설정 테스트
+	 */
+	@GetMapping("/post2/{postId}")
+	@ResponseStatus(HttpStatus.OK)
+	public ArtworkPostResponse getPostWithCookie(@MomentiaUser User user, @PathVariable Long postId
 		, HttpServletRequest request, HttpServletResponse response
 	) {
 		// 게시글을 본 적이 없으면 쿠키에 추가하고 업데이트
@@ -125,7 +136,7 @@ public class ArtworkController {
 	 */
 	@GetMapping("/followingUsers/posts")
 	@ResponseStatus(HttpStatus.OK)
-	public ArtworkFolloingUserPostsResponse getPostList(@MomentiaUser User user) {
+	public ArtworkFollowingUserPostsResponse getPostList(@MomentiaUser User user) {
 		return artworkPostService.getFollowingUserPosts(user);
 	}
 

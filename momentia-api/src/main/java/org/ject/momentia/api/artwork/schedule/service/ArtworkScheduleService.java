@@ -1,4 +1,4 @@
-package org.ject.momentia.api.artwork.batch.service;
+package org.ject.momentia.api.artwork.schedule.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,6 +8,7 @@ import org.ject.momentia.api.artwork.repository.ArtworkLikeRepository;
 import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
 import org.ject.momentia.api.artwork.repository.cache.ArtworkLikeCacheRepository;
 import org.ject.momentia.api.artwork.repository.cache.ArtworkPostCacheRepository;
+import org.ject.momentia.api.artwork.repository.cache.ArtworkViewCacheRepository;
 import org.ject.momentia.api.artwork.repository.cache.PageIdsCacheRepository;
 import org.ject.momentia.api.artwork.repository.cache.model.ArtworkLikeCacheModel;
 import org.ject.momentia.api.artwork.service.module.ArtworkPostModuleService;
@@ -23,7 +24,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class LikeBatchService {
+public class ArtworkScheduleService {
 
 	private final ArtworkPostModuleService artworkService;
 	private final ArtworkLikeRepository artworkLikeRepository;
@@ -33,6 +34,7 @@ public class LikeBatchService {
 	private final ArtworkPostRepository artworkPostRepository;
 	private final PageIdsCacheRepository pagesIdsCacheRepository;
 	private final ArtworkPostCacheRepository artworkPostCacheRepository;
+	private final ArtworkViewCacheRepository artworkViewCacheRepository;
 
 	@Transactional
 	public void migrateLikesToDB() {
@@ -44,6 +46,17 @@ public class LikeBatchService {
 			// Redis에서 데이터를 가져와서 DB에 저장
 			saveLikeToDatabase(cacheModel);
 		}
+	}
+
+	@Transactional
+	public void migrateViewToDB() {
+		artworkViewCacheRepository.findAll().forEach(artworkView -> {
+			ArtworkPost artwork = artworkPostRepository.findById(artworkView.getArtworkId()).orElse(null);
+			if (artwork != null) {
+				artwork.increaseViewCount(artworkView.getView());
+			}
+		});
+		artworkViewCacheRepository.deleteAll();
 	}
 
 	private void saveLikeToDatabase(ArtworkLikeCacheModel cacheModel) {
