@@ -198,4 +198,25 @@ public class ArtworkController {
 			return "삭제 완료";
 		}
 	}
+
+	/**
+	 * 테스트 용 API - 추후 삭제
+	 */
+	@GetMapping("/redis/deleteAll")
+	@ResponseStatus(HttpStatus.OK)
+	public String deleteAllTestCache() {
+		testRepository.deleteAll();
+		return "모두 삭제";
+	}
+
+	@GetMapping("/redis/findAll")
+	@ResponseStatus(HttpStatus.OK)
+	public String findAllCache() {
+		Iterable<testCacheModel> list = testRepository.findAll();
+		StringBuilder all = new StringBuilder();
+		for (testCacheModel model : list) {
+			all.append(model.getName());
+		}
+		return all.toString();
+	}
 }
