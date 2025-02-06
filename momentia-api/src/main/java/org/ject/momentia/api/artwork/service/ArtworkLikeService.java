@@ -53,7 +53,7 @@ public class ArtworkLikeService {
 		// likeCacheModel.addLike(user.getId());
 
 		// artworkLikeCacheRepository.save(likeCacheModel);
-
+		artworkPostCacheRepository.deleteById(post.getId());
 		post.increaseLikeCount();
 	}
 
