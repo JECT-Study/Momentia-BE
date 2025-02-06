@@ -14,10 +14,10 @@ public class ArtworkSchedule {
 
 	private final ArtworkScheduleService artworkScheduleService;
 
-	@Scheduled(fixedRate = 60000) // 1분마다 실행
-	public void migrateLikesToDB() {
-		artworkScheduleService.migrateLikesToDB();
-	}
+	// @Scheduled(fixedRate = 60000) // 1분마다 실행
+	// public void migrateLikesToDB() {
+	// 	artworkScheduleService.migrateLikesToDB();
+	// }
 
 	@Scheduled(fixedRate = 21600000) // 1분마다 실행
 	public void migrateViewToDB() {
