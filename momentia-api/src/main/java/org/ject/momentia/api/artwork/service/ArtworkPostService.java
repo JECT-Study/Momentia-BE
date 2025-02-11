@@ -118,7 +118,7 @@ public class ArtworkPostService {
 		artworkLikeService.deleteAllByArtwork(artworkPost);
 
 		artworkPostCacheRepository.deleteById(artworkPost.getId());
-		pageIdsCacheRepository.deleteAll();
+		//pageIdsCacheRepository.deleteAll();
 	}
 
 	@Transactional
