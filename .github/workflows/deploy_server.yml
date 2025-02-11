@@ -74,7 +74,7 @@ jobs:
         with:
           host: ${{ secrets.ALPHA_SERVER_HOST }}
           username: ${{ secrets.ALPHA_SERVER_USERNAME }}
-          key: ${{ secrets.ALPHA_SERVER_SSH_KEY }}
+          password: ${{ secrets.ALPHA_SERVER_PASSWORD }}
           port: ${{ secrets.ALPHA_SERVER_PORT }}
           script: |
             docker pull ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
