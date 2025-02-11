@@ -7,6 +7,6 @@ public record CollectionListModel(
 	Long collectionId,
 	String collectionImage,
 	String name,
-	String status
+	String collectionStatus
 ) {
 }
