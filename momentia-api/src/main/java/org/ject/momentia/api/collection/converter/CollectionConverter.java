@@ -20,7 +20,7 @@ public class CollectionConverter {
 		return CollectionListModel.builder()
 			.collectionId(collection.getId())
 			.collectionImage(imageUrl)
-			.status(collection.getStatus().name())
+			.collectionStatus(collection.getStatus().name())
 			.name(collection.getName())
 			.build();
 	}
