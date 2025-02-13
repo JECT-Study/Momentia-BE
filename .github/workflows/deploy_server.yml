@@ -83,7 +83,7 @@ jobs:
             docker run -d \
               --name momentia-api-container-alpha \
               -p 8080:8080 \
-              -e SPRING_PROFILES_ACTIVE=dev \
+              -e SPRING_PROFILES_ACTIVE=alpha \
               --env-file ./.env \
               ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
 
