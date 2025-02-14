@@ -92,7 +92,7 @@ public class MonthlyService {
 				artwork == null ? null : imageService.getImageUrl(ImageTargetType.ARTWORK, artwork.getId());
 
 			// 좋아요 여부
-			Boolean isFollow = followService.isFollowing(user, u, true);
+			Boolean isFollow = followService.isFollowing(u, user, true);
 
 			return MonthlyUserConverter.toUserListModel(u, postImage, isFollow);
 		}).toList();
