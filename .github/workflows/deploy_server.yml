@@ -85,6 +85,7 @@ jobs:
               -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=alpha \
               --env-file ./.env \
+              -v /root/ssl:/root/ssl \
               ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
 
   deploy-server-real:
