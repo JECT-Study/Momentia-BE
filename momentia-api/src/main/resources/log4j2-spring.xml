@@ -2,7 +2,9 @@
 <Configuration>
     <Properties>
         <Property name="baseDir">/home1/irteam/logs/springboot</Property>
-        <Property name="applicationPattern">%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%level](%logger{1.}:%line) %message%n</Property>
+        <Property name="applicationPattern">%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%level](%logger{1.}:%line)
+            %message%n
+        </Property>
     </Properties>
 
     <!-- Appender 설정 -->
@@ -12,40 +14,38 @@
         </Console>
     </Appenders>
 
-       <!-- logger 설정 -->
+    <!-- logger 설정 -->
     <loggers>
-        <!-- local 환경의 경우 NELO 전송 X -->
         <springProfile name="local">
             <root level="${spring:logger.root.level}">
-                <appender-ref ref="STDOUT" />
+                <appender-ref ref="STDOUT"/>
             </root>
         </springProfile>
 
         <!-- Non-container & Non-local environment logging -->
         <springProfile name="!local">
             <root level="${spring:logger.root.level}">
-                <appender-ref ref="STDOUT" />
-                <!-- TODO: 에러 로그 전송 폼 <appender-ref ref="nelo-async" level="ERROR" /> -->
+                <appender-ref ref="STDOUT"/>
             </root>
         </springProfile>
 
         <!-- application -->
-        <logger name="com.ject.drive" level="${spring:logger.default.level}" />
+        <logger name="com.ject" level="${spring:logger.default.level}"/>
 
         <!-- DB query Log -->
-        <logger name="mybatis.mapper" level="${spring:logger.db.level}" />
-        <logger name="com.nhncorp.nbase_t.jdbc.statement" level="${spring:logger.db.level}" />
-        <logger name="org.springframework.data.mongodb" level="${spring:logger.db.level}" />
+        <logger name="mybatis.mapper" level="${spring:logger.db.level}"/>
+        <logger name="com.nhncorp.nbase_t.jdbc.statement" level="${spring:logger.db.level}"/>
+        <logger name="org.springframework.data.mongodb" level="${spring:logger.db.level}"/>
 
         <!-- lettuce DEBUG remove-->
-        <logger name="io.lettuce.core" level="INFO" />
+        <logger name="io.lettuce.core" level="INFO"/>
 
         <!-- hikari pool DEBUG remove -->
-        <logger name="com.zaxxer.hikari.pool" level="INFO" />
+        <logger name="com.zaxxer.hikari.pool" level="INFO"/>
 
         <!-- RMI DEBUG remove -->
-        <logger name="sun.rmi" level="WARN" />
-        <logger name="javax.management" level="INFO" />
+        <logger name="sun.rmi" level="WARN"/>
+        <logger name="javax.management" level="INFO"/>
     </loggers>
 </Configuration>
 
