@@ -76,6 +76,22 @@ public class ArtworkPostCacheModel implements Serializable {
 	public String getImageUrl() {
 		return metadata.split(",")[8];  // 아홉 번째 요소: imageUrl
 	}
+
+	public void increaseLikeCount() {
+		// metadata를 쉼표로 분리하여 배열로 변환
+		String[] parts = metadata.split(",");
+
+		// likeCount가 저장된 인덱스 (5번째 요소) 값을 가져와서 증가
+		Long currentLikeCount = Long.parseLong(parts[4]);
+		currentLikeCount++;
+
+		// 증가된 값을 다시 설정
+		parts[4] = String.valueOf(currentLikeCount);
+
+		// 업데이트된 metadata 문자열을 다시 결합
+		this.metadata = String.join(",", parts);
+	}
+
 }
 // public class ArtworkPostCacheModel implements Serializable {
 //

@@ -86,7 +86,8 @@ public class CollectionArtworkService {
 			.map((p) -> {
 					String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK, p.getId());
 					Boolean isLiked = artworkLikeService.isLiked(user, p);
-					return ArtworkPostConverter.toArtworkPostModel(p, isLiked, imageUrl);
+					Long addCount = artworkLikeService.getLikeCountRDBAndCacheSum(p.getId());
+					return ArtworkPostConverter.toArtworkPostModel(p, isLiked, imageUrl, addCount);
 				}
 			)
 			.toList();
