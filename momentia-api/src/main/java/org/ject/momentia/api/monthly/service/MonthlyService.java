@@ -62,7 +62,8 @@ public class MonthlyService {
 					ArtworkPost post = idToPostMap.get(p.getPost().getId());
 					Boolean isLiked = user != null && artworkLikeService.isLiked(user, post);
 					String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK, post.getId());
-					return ArtworkPostConverter.toArtworkPostModel(post, isLiked, imageUrl);
+					Long addCount = artworkLikeService.getLikeCountRDBAndCacheSum(post.getId());
+					return ArtworkPostConverter.toArtworkPostModel(post, isLiked, imageUrl, addCount);
 				}
 			)
 			.toList();

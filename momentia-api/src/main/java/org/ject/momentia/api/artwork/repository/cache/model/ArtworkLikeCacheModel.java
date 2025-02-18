@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@RedisHash(value = "ArtworkLikeCacheModel", timeToLive = 10000L) // Redis에 저장될 키 이름
+@RedisHash(value = "ArtworkLikeCacheModel") // Redis에 저장될 키 이름
 public class ArtworkLikeCacheModel {
 	@Id
 	Long artworkId;
@@ -31,5 +31,9 @@ public class ArtworkLikeCacheModel {
 
 	public boolean hasLiked(Long userId) {
 		return userLikes.containsKey(userId);
+	}
+
+	public Long getLikeCount() {
+		return (long)this.userLikes.size();
 	}
 }

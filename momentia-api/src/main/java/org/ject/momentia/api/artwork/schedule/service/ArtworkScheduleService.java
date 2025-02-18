@@ -1,8 +1,10 @@
 package org.ject.momentia.api.artwork.schedule.service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ject.momentia.api.artwork.repository.ArtworkLikeRepository;
 import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
@@ -17,6 +19,7 @@ import org.ject.momentia.common.domain.artwork.ArtworkLike;
 import org.ject.momentia.common.domain.artwork.ArtworkLikeId;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.user.User;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -35,59 +38,73 @@ public class ArtworkScheduleService {
 	private final PageIdsCacheRepository pagesIdsCacheRepository;
 	private final ArtworkPostCacheRepository artworkPostCacheRepository;
 	private final ArtworkViewCacheRepository artworkViewCacheRepository;
+	private final ArtworkPostModuleService artworkPostModuleService;
+	private final RedisTemplate<String, String> redisTemplate;
 
 	@Transactional
 	public void migrateLikesToDB() {
 		// Redis에서 좋아요 데이터를 가져옴
-		List<ArtworkLikeCacheModel> likeCacheModels = (List<ArtworkLikeCacheModel>)artworkLikeCacheRepository.findAll();
+		Set<String> idSet = redisTemplate.opsForSet().members("ArtworkLikeCacheModel");
 
-		// 각 캐시 데이터를 DB로 옮기기
-		for (ArtworkLikeCacheModel cacheModel : likeCacheModels) {
-			// Redis에서 데이터를 가져와서 DB에 저장
-			saveLikeToDatabase(cacheModel);
+		// 작품 id 리스트 가져옴
+		List<Long> idList = (idSet == null || idSet.isEmpty())
+			? Collections.emptyList()
+			: idSet.stream()
+			.map(Long::valueOf)
+			.toList();
+
+		for (Long id : idList) {
+			artworkLikeCacheRepository.findById(id).ifPresent(this::saveLikeToDatabase);
 		}
+		artworkPostModuleService.deleteAllPageIdsCache();
 	}
 
 	@Transactional
 	public void migrateViewToDB() {
-		artworkViewCacheRepository.findAll().forEach(artworkView -> {
-			ArtworkPost artwork = artworkPostRepository.findById(artworkView.getArtworkId()).orElse(null);
-			if (artwork != null) {
-				artwork.increaseViewCount(artworkView.getView());
-			}
-		});
-		artworkViewCacheRepository.deleteAll();
+		Set<String> idSet = redisTemplate.opsForSet().members("ArtworkViewCacheModel");
+
+		List<Long> idList = (idSet == null || idSet.isEmpty())
+			? Collections.emptyList()
+			: idSet.stream()
+			.map(Long::valueOf)
+			.toList();
+
+		for (Long id : idList) {
+			artworkViewCacheRepository.findById(id).ifPresent(artworkView -> {
+				ArtworkPost artwork = artworkPostRepository.findById(artworkView.getArtworkId()).orElse(null);
+				if (artwork != null) {
+					artwork.increaseViewCount(artworkView.getView());
+				}
+			});
+			artworkViewCacheRepository.deleteById(id);
+		}
 	}
 
-	private void saveLikeToDatabase(ArtworkLikeCacheModel cacheModel) {
+	void saveLikeToDatabase(ArtworkLikeCacheModel cacheModel) {
 		// DB에 저장할 ArtworkLike 엔티티 생성
-		ArtworkPost artworkPost = artworkService.findPostByIdElseReturnNull(cacheModel.getArtworkId());
+		ArtworkPost artworkPost = artworkPostRepository.findById(cacheModel.getArtworkId()).orElse(null);
 		Map<Long, LocalDateTime> userLikes = cacheModel.getUserLikes();
+		if (artworkPost != null) {
+			for (Map.Entry<Long, LocalDateTime> entry : userLikes.entrySet()) {
+				Long userId = entry.getKey();
+				LocalDateTime likeTime = entry.getValue(); // 좋아요 시간을 얻음
 
-		for (Map.Entry<Long, LocalDateTime> entry : userLikes.entrySet()) {
-			Long userId = entry.getKey();
-			LocalDateTime likeTime = entry.getValue(); // 좋아요 시간을 얻음
+				// 사용자가 좋아요를 눌렀다면, DB에 삽입
+				User user = userRepository.findById(userId).orElse(null);
+				if (user == null)
+					continue;
 
-			// 사용자가 좋아요를 눌렀다면, DB에 삽입
-			User user = userRepository.findById(userId).orElse(null);
-			if (user == null) {
-				continue;
-			} // -> 알려줘야 할거 같은데..
-
-			ArtworkLikeId artworkLikeId = new ArtworkLikeId(user, artworkPost);
-
-			// 이미 DB에 존재하는지 확인하고 없으면 저장
-			if (artworkLikeRepository.findById(artworkLikeId).isEmpty()) {
-				// ArtworkLike 엔티티를 생성하여 저장
-				ArtworkLike like = new ArtworkLike(artworkLikeId, likeTime, likeTime);
-				artworkLikeRepository.save(like);
-
-				artworkPost.increaseLikeCount();
+				ArtworkLikeId artworkLikeId = new ArtworkLikeId(user, artworkPost);
+				// 이미 DB에 존재하는지 확인하고 없으면 저장
+				if (!artworkLikeRepository.existsById(artworkLikeId)) {
+					ArtworkLike like = new ArtworkLike(artworkLikeId, likeTime, likeTime);
+					artworkLikeRepository.save(like);
+					artworkPost.increaseLikeCount();
+				}
 			}
+			artworkPostRepository.save(artworkPost);
+			artworkPostCacheRepository.deleteById(artworkPost.getId());
 		}
-		artworkPostRepository.save(artworkPost);
-		artworkPostCacheRepository.deleteById(artworkPost.getId());
 		artworkLikeCacheRepository.deleteById(cacheModel.getArtworkId());
-		pagesIdsCacheRepository.deleteAll();
 	}
 }

@@ -1,9 +1,13 @@
 package org.ject.momentia.api.test;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,9 +42,11 @@ public class testController {
 	@GetMapping("/redis/getAll")
 	@ResponseStatus(HttpStatus.OK)
 	public String getAllTestCache() {
-		List<Long> idList = redisTemplate.opsForSet().members("testCacheModel").stream()
+		List<Long> idList = Optional.ofNullable(redisTemplate.opsForSet().members("testCacheModel"))
+			.orElse(Collections.emptySet())  // null일 경우 빈 Set을 반환
+			.stream()
 			.map(Long::valueOf)  // String -> Long 변환
-			.toList();
+			.collect(Collectors.toList());
 		StringBuilder st = new StringBuilder();
 		for (Long id : idList) {
 			if (testRepository.findById(id).isPresent()) {
@@ -69,19 +75,24 @@ public class testController {
 	 */
 	@GetMapping("/redis/deleteAll2")
 	@ResponseStatus(HttpStatus.OK)
-	public String deleteTestCache2() {
-		List<Long> idList = redisTemplate.opsForSet().members("testCacheModel").stream()
+	public ResponseEntity<String> deleteTestCache2() {
+		// List<Long> idList = Optional.ofNullable(redisTemplate.opsForSet().members("testCacheModel"))
+		// 	.orElse(Collections.emptySet())  // null일 경우 빈 Set을 반환
+		// 	.stream()
+		// 	.map(Long::valueOf)  // String -> Long 변환
+		// 	.toList();
+		List<Long> idList = new java.util.ArrayList<>(redisTemplate.opsForSet().members("testCacheModel").stream()
 			.map(Long::valueOf)  // String -> Long 변환
-			.toList();
-
+			.toList());
+		idList.add(200L);
 		for (Long aLong : idList) {
-			testRepository.findById(aLong).ifPresent(test -> {
-			});
+			// testRepository.findById(aLong).ifPresent(test -> {
+			// });
 			testRepository.deleteById(aLong);
 			redisTemplate.opsForSet().remove("testCacheModel", String.valueOf(aLong));
 		}
 
-		return "삭제 완료";
+		return ResponseEntity.ok().body("삭제 완료");
 	}
 
 	/**

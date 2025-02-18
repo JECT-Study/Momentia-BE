@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ArtworkPostConverter {
+
 	public static ArtworkPost toArtworkPost(ArtworkPostCreateRequest artworkPostCreateRequest, User user) {
 		return ArtworkPost.builder()
 			.id(null)
@@ -41,19 +42,18 @@ public class ArtworkPostConverter {
 	}
 
 	public static ArtworkPostResponse toArtworkPostResponse(ArtworkPost artworkPost, boolean isMine, boolean isLiked,
-		String imageUrl, Boolean isFollow) {
+		String imageUrl, Boolean isFollow, Long addLikeCount) {
 		return ArtworkPostResponse.builder()
 			.postId(artworkPost.getId())
 			.postImage(imageUrl)
 			.explanation(artworkPost.getExplanation())
 			.title(artworkPost.getTitle())
 			.viewCount(artworkPost.getViewCount())
-			.likeCount(artworkPost.getLikeCount())
+			.likeCount(artworkPost.getLikeCount() + addLikeCount)
 			.commentCount(artworkPost.getCommentCount())
 			.createdTime(artworkPost.getCreatedAt())
 			.artworkField(artworkPost.getCategory().getKoreanName())
 			.status(artworkPost.getStatus().name())
-
 			.userId(artworkPost.getUser().getId())
 			.userField(
 				artworkPost.getUser().getField() == null ? null : artworkPost.getUser().getField().getKoreanName())
@@ -62,7 +62,6 @@ public class ArtworkPostConverter {
 			.isFollow(isFollow)
 			.profileImage(artworkPost.getUser().getProfileImage() == null ? null :
 				artworkPost.getUser().getProfileImage().getImageSrc())
-
 			.isMine(isMine)
 			.isLiked(isLiked)
 			.build();
@@ -76,7 +75,8 @@ public class ArtworkPostConverter {
 			.build();
 	}
 
-	public static ArtworkPostModel toArtworkPostModel(ArtworkPost artworkPost, Boolean isLiked, String imageUrl) {
+	public static ArtworkPostModel toArtworkPostModel(ArtworkPost artworkPost, Boolean isLiked, String imageUrl,
+		Long addLikeCount) {
 		return ArtworkPostModel.builder()
 			.postId(artworkPost.getId())
 			.postImage(imageUrl)
@@ -84,11 +84,10 @@ public class ArtworkPostConverter {
 			.nickname(artworkPost.getUser().getNickname())
 			.likeCount(artworkPost.getLikeCount())
 			.isLiked(isLiked)
-			.likeCount(artworkPost.getLikeCount())
+			.likeCount(artworkPost.getLikeCount() + addLikeCount)
 			.title(artworkPost.getTitle())
 			.userId(artworkPost.getUser().getId())
 			.commentCount(artworkPost.getCommentCount())
-			.likeCount(artworkPost.getLikeCount())
 			.status(artworkPost.getStatus().name())
 			.build();
 	}
@@ -119,7 +118,7 @@ public class ArtworkPostConverter {
 	}
 
 	public static ArtworkPostModel ArtworkPostCacheModeltoArtworkPostModel(ArtworkPostCacheModel artworkPostCacheModel,
-		Boolean isLiked, String nickname) {
+		Boolean isLiked, String nickname, Long addLikeCount) {
 		return ArtworkPostModel.builder()
 			.postId(artworkPostCacheModel.getId())
 			.title(artworkPostCacheModel.getTitle())
@@ -128,7 +127,7 @@ public class ArtworkPostConverter {
 			.nickname(nickname)
 			.viewCount(artworkPostCacheModel.getViewCount())
 			.commentCount(artworkPostCacheModel.getCommentCount())
-			.likeCount(artworkPostCacheModel.getLikeCount())
+			.likeCount(artworkPostCacheModel.getLikeCount() + addLikeCount)
 			.isLiked(isLiked)
 			.status(artworkPostCacheModel.getStatus().name())
 			.build();
