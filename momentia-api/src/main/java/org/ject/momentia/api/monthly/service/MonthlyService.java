@@ -75,16 +75,12 @@ public class MonthlyService {
 	public MonthlyUsersResponse getMonthlyUsers(User user) {
 		/// 일단 고정으로 박아둠 -> 추후 수정
 		List<MonthlyUser> monthlyUsers = monthlyUserRepository.findAllByMonthAndYearOrderByRankAsc(12, 2024);
-
-		List<Long> ids = monthlyUsers.stream()
-			.map((a) -> a.getUser().getId())
-			.toList();
-
-		Map<Long, User> userMap = userRepository.findAllByIdIn(ids).stream()
-			.collect(Collectors.toMap(User::getId, User -> User));
+		Map<Long, User> userMap = monthlyUsers.stream()
+			.map(MonthlyUser::getUser)
+			.collect(Collectors.toMap(User::getId, u -> u));
 
 		// monthlyUsers의 순서대로 UserListModel을 생성합니다.
-		List<UserListModel> userListModels = monthlyUsers.stream().map((monthlyUser) -> {
+		List<UserListModel> userListModels = monthlyUsers.stream().map(monthlyUser -> {
 			User u = userMap.get(monthlyUser.getUser().getId());
 
 			// 대표작

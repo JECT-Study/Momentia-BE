@@ -74,7 +74,7 @@ jobs:
         with:
           host: ${{ secrets.ALPHA_SERVER_HOST }}
           username: ${{ secrets.ALPHA_SERVER_USERNAME }}
-          key: ${{ secrets.ALPHA_SERVER_SSH_KEY }}
+          password: ${{ secrets.ALPHA_SERVER_PASSWORD }}
           port: ${{ secrets.ALPHA_SERVER_PORT }}
           script: |
             docker pull ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
@@ -83,8 +83,9 @@ jobs:
             docker run -d \
               --name momentia-api-container-alpha \
               -p 8080:8080 \
-              -e SPRING_PROFILES_ACTIVE=dev \
+              -e SPRING_PROFILES_ACTIVE=alpha \
               --env-file ./.env \
+              -v /root/ssl:/root/ssl \
               ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
 
   deploy-server-real:
