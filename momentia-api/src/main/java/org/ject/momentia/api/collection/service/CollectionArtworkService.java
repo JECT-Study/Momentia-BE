@@ -17,7 +17,7 @@ import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.api.image.service.ImageService;
 import org.ject.momentia.api.pagination.converter.PaginationConverter;
 import org.ject.momentia.api.pagination.model.PaginationModel;
-import org.ject.momentia.api.pagination.model.PaginationWithIsMineResponse;
+import org.ject.momentia.api.pagination.model.PaginationWithIsMineAndNameResponse;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.collection.Collection;
 import org.ject.momentia.common.domain.collection.CollectionArtwork;
@@ -70,7 +70,7 @@ public class CollectionArtworkService {
 	}
 
 	@Transactional
-	public PaginationWithIsMineResponse<ArtworkPostModel> getCollectionPosts(
+	public PaginationWithIsMineAndNameResponse<ArtworkPostModel> getCollectionPosts(
 		Long collectionId, String sort, Integer page, Integer size, User user) {
 		Collection collection = collectionService.findCollectionElseThrowException(collectionId);
 		if (collection.getStatus().equals(CollectionStatus.PRIVATE) && !collection.getUser().equals(user)) {
@@ -93,8 +93,9 @@ public class CollectionArtworkService {
 			.toList();
 		PaginationModel paginationResponse = PaginationConverter.pageToPaginationModel(posts);
 
-		return new PaginationWithIsMineResponse<>(
+		return new PaginationWithIsMineAndNameResponse<>(
 			isMine,
+			collection.getName(),
 			postModelList,
 			paginationResponse
 		);

@@ -6,7 +6,7 @@ import org.ject.momentia.api.collection.model.CollectionArtworkCreateResponse;
 import org.ject.momentia.api.collection.service.CollectionArtworkService;
 import org.ject.momentia.api.mvc.annotation.EnumValue;
 import org.ject.momentia.api.mvc.annotation.MomentiaUser;
-import org.ject.momentia.api.pagination.model.PaginationWithIsMineResponse;
+import org.ject.momentia.api.pagination.model.PaginationWithIsMineAndNameResponse;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -57,7 +57,7 @@ public class CollectionPostController {
 	 */
 	@GetMapping("/{collectionId}/posts")
 	@ResponseStatus(HttpStatus.OK) //?page=0&size=30&sort=recent
-	public PaginationWithIsMineResponse<ArtworkPostModel> getCollectionPosts(
+	public PaginationWithIsMineAndNameResponse<ArtworkPostModel> getCollectionPosts(
 		@PathVariable Long collectionId,
 		@EnumValue(enumClass = ArtworkPostSort.class, ignoreCase = true)
 		@RequestParam String sort,

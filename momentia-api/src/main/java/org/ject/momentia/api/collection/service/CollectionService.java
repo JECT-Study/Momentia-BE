@@ -71,6 +71,9 @@ public class CollectionService {
 			.orElseThrow(ErrorCd.COLLECTION_NOT_FOUND::serviceException);
 		if (user == null || !collection.getUser().getId().equals(user.getId()))
 			throw ErrorCd.NO_PERMISSION.serviceException();
+		if (collectionRepository.existsCollectionsByNameAndUser(request.name(), user)) {
+			throw ErrorCd.DUPLICATE_COLLECTION_NAME.serviceException();
+		}
 		collection.update(request.name(), request.status());
 	}
 
