@@ -77,6 +77,7 @@ public class ArtworkScheduleService {
 				}
 			});
 			artworkViewCacheRepository.deleteById(id);
+			artworkPostCacheRepository.deleteById(id);
 		}
 	}
 
