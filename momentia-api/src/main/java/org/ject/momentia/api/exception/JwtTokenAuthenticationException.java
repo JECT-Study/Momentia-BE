@@ -6,4 +6,5 @@ public class JwtTokenAuthenticationException extends AuthenticationException {
 	public JwtTokenAuthenticationException(String msg) {
 		super(msg);
 	}
+
 }

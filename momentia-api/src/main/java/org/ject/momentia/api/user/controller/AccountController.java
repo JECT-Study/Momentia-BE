@@ -5,8 +5,8 @@ import org.ject.momentia.api.user.model.NormalLoginRequest;
 import org.ject.momentia.api.user.model.NormalRegisterRequest;
 import org.ject.momentia.api.user.model.RefreshTokenRequest;
 import org.ject.momentia.api.user.model.SocialLoginResponse;
-import org.ject.momentia.common.domain.user.type.OAuthProvider;
 import org.ject.momentia.api.user.service.AccountService;
+import org.ject.momentia.common.domain.user.type.OAuthProvider;
 import org.ject.momentia.common.util.CommonConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,8 +66,14 @@ public class AccountController {
 		return accountService.normalLogin(normalLoginRequest);
 	}
 
+	@PostMapping("/login/normal/test")
+	@ResponseStatus(HttpStatus.OK)
+	public AuthorizationToken normalLoginForTest(@RequestBody @Valid NormalLoginRequest normalLoginRequest) {
+		return accountService.normalLoginTest(normalLoginRequest);
+	}
+
 	@PostMapping("/refresh")
-	public AuthorizationToken refresh(@Valid RefreshTokenRequest refreshTokenRequest) {
+	public AuthorizationToken refresh(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
 		return accountService.refreshToken(refreshTokenRequest);
 	}
 }

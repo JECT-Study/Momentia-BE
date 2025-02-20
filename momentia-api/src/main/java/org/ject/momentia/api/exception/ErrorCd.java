@@ -17,6 +17,7 @@ public enum ErrorCd {
 	INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "Invalid parameter"),
 	NO_PERMISSION(HttpStatus.FORBIDDEN, "no permission"),
 	NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "not authorized"),
+	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Invalid Token. Please request a new token."),
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
 
 	// User Error
@@ -38,16 +39,15 @@ public enum ErrorCd {
 	LIKE_ALREADY_REMOVED(HttpStatus.CONFLICT, "already removed or not exist"),
 
 	// collection Error
-	DUPLICATE_COLLECTION_NAME(HttpStatus.CONFLICT,"duplicate collection name"),
-	COLLECTION_NOT_FOUND(HttpStatus.NOT_FOUND,  "collection not found"),
-	DUPLICATE_COLLECTION_ARTWORK(HttpStatus.CONFLICT,"duplicate artwork"),
+	DUPLICATE_COLLECTION_NAME(HttpStatus.CONFLICT, "duplicate collection name"),
+	COLLECTION_NOT_FOUND(HttpStatus.NOT_FOUND, "collection not found"),
+	DUPLICATE_COLLECTION_ARTWORK(HttpStatus.CONFLICT, "duplicate artwork"),
 	COLLECTION_ARTWORK_ALREADY_REMOVED(HttpStatus.CONFLICT, "already removed or not exist"),
 
 	// Image Error
 	IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "image not found"),
 	IMAGE_ALREADY_PROCESSED(HttpStatus.CONFLICT, "Image already processed"),
 	IMAGE_NOT_UPLOADED(HttpStatus.BAD_REQUEST, "image not uploaded");
-
 
 	private final HttpStatus httpStatus;
 	private final String errorMessage;

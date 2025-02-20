@@ -14,7 +14,7 @@ public class ArtworkSchedule {
 
 	private final ArtworkScheduleService artworkScheduleService;
 
-	@Scheduled(fixedRate = 180000) // 1분마다 실행
+	@Scheduled(fixedRate = 180000)
 	public void migrateLikesToDB() {
 		artworkScheduleService.migrateLikesToDB();
 	}
@@ -22,6 +22,11 @@ public class ArtworkSchedule {
 	@Scheduled(fixedRate = 180000)
 	public void migrateViewToDB() {
 		artworkScheduleService.migrateViewToDB();
+	}
+
+	@Scheduled(fixedRate = 3600000)
+	public void deleteAllPageIds() {
+		artworkScheduleService.deleteAllPostIds();
 	}
 
 }
