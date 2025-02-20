@@ -56,7 +56,7 @@ public class ArtworkScheduleService {
 		for (Long id : idList) {
 			artworkLikeCacheRepository.findById(id).ifPresent(this::saveLikeToDatabase);
 		}
-		artworkPostModuleService.deleteAllPageIdsCache();
+		//artworkPostModuleService.deleteAllPageIdsCache();
 	}
 
 	@Transactional
@@ -79,6 +79,11 @@ public class ArtworkScheduleService {
 			artworkViewCacheRepository.deleteById(id);
 			artworkPostCacheRepository.deleteById(id);
 		}
+	}
+
+	@Transactional
+	public void deleteAllPostIds() {
+		artworkPostModuleService.deleteAllPageIdsCache();
 	}
 
 	void saveLikeToDatabase(ArtworkLikeCacheModel cacheModel) {
