@@ -178,19 +178,19 @@ public class ArtworkPostService {
 		Page<Long> pages;
 
 		/// 레디스에 키 값에 해당하는 id List 검색
-		/// ********* 캐시 삭제 에러로 캐시 조회 부분 잠시 삭제 -> 버그 수정하고 다시 캐시 적용 할 예정
-		PageIdsCacheModel pageIdsCacheModel = pageIdsCacheRepository.findById(key).orElse(null);
+		PageIdsCacheModel pageIdsCacheModel =
+			keyword == null ? null : pageIdsCacheRepository.findById(key).orElse(null);
 
 		/// 캐시에 저장되어 있지 않다면, rdb에서 가져온다.
 		if (pageIdsCacheModel == null) {
-			if (keyword == null)
+			if (keyword == null) {
 				pages = artworkPostRepository.findByIdListCategoryAndStatus(category, pageable);
-			else
+				pageIdsCacheModel = pageIdsCacheRepository.save(new PageIdsCacheModel(key, pages));
+			} else {
 				pages = artworkPostRepository.findByIdListCategoryAndStatusAndKeyword(category, keyword, pageable);
-			pageIdsCacheModel = pageIdsCacheRepository.save(new PageIdsCacheModel(key, pages));
-			//pageIdsCacheModel = new PageIdsCacheModel(key, pages);
+				pageIdsCacheModel = new PageIdsCacheModel(key, pages);
+			}
 		}
-
 		return pageIdsCacheModel;
 
 	}
