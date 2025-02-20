@@ -19,6 +19,7 @@ public enum ErrorCd {
 	NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "not authorized"),
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Invalid Token. Please request a new token."),
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
+	INVALID_STATUS(HttpStatus.BAD_REQUEST, "Invalid status"),
 
 	// User Error
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "user not found"),
@@ -34,15 +35,21 @@ public enum ErrorCd {
 	// Artwork Error
 	ARTWORK_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "artwork post not found"),
 	ARTWORK_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "artwork comment not found"),
-
 	ALREADY_lIKE(HttpStatus.CONFLICT, "already like"),
 	LIKE_ALREADY_REMOVED(HttpStatus.CONFLICT, "already removed or not exist"),
+	INVALID_ARTWORK_TITLE(HttpStatus.BAD_REQUEST, "Invalid title"),
+	INVALID_ARTWORK_EXPLANATION(HttpStatus.BAD_REQUEST, "Invalid explanation"),
+	INVALID_ARTWORK_FIELD(HttpStatus.BAD_REQUEST, "Invalid field"),
 
-	// collection Error
+	// Artwork Comment Error
+	INVALID_COMMENT_CONTENT(HttpStatus.BAD_REQUEST, "Invalid comment"),
+
+	// Collection Error
 	DUPLICATE_COLLECTION_NAME(HttpStatus.CONFLICT, "duplicate collection name"),
 	COLLECTION_NOT_FOUND(HttpStatus.NOT_FOUND, "collection not found"),
 	DUPLICATE_COLLECTION_ARTWORK(HttpStatus.CONFLICT, "duplicate artwork"),
 	COLLECTION_ARTWORK_ALREADY_REMOVED(HttpStatus.CONFLICT, "already removed or not exist"),
+	INVALID_COLLECTION_NAME(HttpStatus.BAD_REQUEST, "Invalid collection name"),
 
 	// Image Error
 	IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "image not found"),

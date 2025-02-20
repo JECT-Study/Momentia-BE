@@ -1,6 +1,7 @@
 package org.ject.momentia.api.artwork.model;
 
 import org.ject.momentia.api.mvc.annotation.EnumValue;
+import org.ject.momentia.common.domain.artwork.type.ArtworkPostStatus;
 import org.ject.momentia.common.domain.artwork.type.Category;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -24,6 +25,7 @@ public record ArtworkPostCreateRequest(
 	String explanation,
 
 	@NotEmpty(message = "상태 값은 'PUBLIC' or 'PRIVATE' 이여야합니다.")
+	@EnumValue(enumClass = ArtworkPostStatus.class, ignoreCase = true, nullable = true, message = "상태 값은 PUBLIC,PRIVATE 값이여야 합니다.")
 	String status
 ) {
 }

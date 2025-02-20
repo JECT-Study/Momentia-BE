@@ -11,9 +11,6 @@ public class RefreshTokenHolder {
 	protected static final Map<String, Long> refreshTokens = new HashMap<>();
 
 	public static Long getRefreshToken(String refreshToken) {
-		for (int i = 0; i < refreshToken.length(); i++) {
-			System.out.println("나는" + refreshTokens.get(i));
-		}
 		return refreshTokens.get(refreshToken);
 	}
 
