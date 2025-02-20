@@ -51,7 +51,18 @@ public class JwtTokenProvider {
 	}
 
 	public AuthorizationToken createTokenInfo(User user) {
-		return new AuthorizationToken(createAccessToken(user), createRefreshToken(user));
+		String refreshToken = createRefreshToken(user);
+		RefreshTokenHolder.setRefreshToken(refreshToken, user.getId());
+		return new AuthorizationToken(createAccessToken(user), refreshToken);
+	}
+
+	/**
+	 * 테스트용
+	 */
+	public AuthorizationToken createTokenInfoTest(User user) {
+		String refreshToken = createRefreshToken(user);
+		RefreshTokenHolder.setRefreshToken(refreshToken, user.getId());
+		return new AuthorizationToken(createAccessTokenTest(user), refreshToken);
 	}
 
 	public AuthorizationToken createTokenInfo(String refreshToken) {
@@ -76,6 +87,18 @@ public class JwtTokenProvider {
 		return createToken(claims, accessTokenValidityInSeconds);
 	}
 
+	/**
+	 * 테스트용
+	 */
+	public String createAccessTokenTest(User user) {
+		var claims = Jwts.claims()
+			.subject(user.getEmail())
+			.add("id", user.getId())
+			.build();
+
+		return createTokenTest(claims, accessTokenValidityInSeconds);
+	}
+
 	public String createRefreshToken(User user) {
 		var claims = Jwts.claims()
 			.add("id", user.getId())
@@ -87,6 +110,22 @@ public class JwtTokenProvider {
 	private String createToken(Claims claims, long validityInSeconds) {
 		var now = new Date();
 		var validity = new Date(now.getTime() + validityInSeconds * 1000);
+		var key = Keys.hmacShaKeyFor(secretKey.getBytes());
+
+		return Jwts.builder()
+			.claims(claims)
+			.issuedAt(now)
+			.expiration(validity)
+			.signWith(key)
+			.compact();
+	}
+
+	/**
+	 * 테스트용
+	 */
+	private String createTokenTest(Claims claims, long validityInSeconds) {
+		var now = new Date();
+		var validity = new Date(now.getTime() + 60 * 1000);
 		var key = Keys.hmacShaKeyFor(secretKey.getBytes());
 
 		return Jwts.builder()
@@ -123,7 +162,7 @@ public class JwtTokenProvider {
 		var user = userRepository.findById(userId).orElseThrow(ErrorCd.NOT_AUTHORIZED::serviceException);
 		var principal = CustomUserDetails.from(user);
 
-		return new UsernamePasswordAuthenticationToken(principal,token,principal.getAuthorities());
+		return new UsernamePasswordAuthenticationToken(principal, token, principal.getAuthorities());
 		// 기존 코드 -> return new UsernamePasswordAuthenticationToken(principal, token);
 	}
 
