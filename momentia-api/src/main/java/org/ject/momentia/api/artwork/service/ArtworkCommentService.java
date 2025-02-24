@@ -6,12 +6,12 @@ import java.util.stream.Collectors;
 
 import org.ject.momentia.api.artwork.converter.ArtworkCommentConverter;
 import org.ject.momentia.api.artwork.converter.ArtworkPostConverter;
-import org.ject.momentia.api.artwork.model.ArtworkCommentIdResponse;
-import org.ject.momentia.api.artwork.model.ArtworkCommentListResponse;
-import org.ject.momentia.api.artwork.model.ArtworkCommentModel;
-import org.ject.momentia.api.artwork.model.ArtworkCommentRequest;
-import org.ject.momentia.api.artwork.repository.ArtworkCommentRepository;
+import org.ject.momentia.api.artwork.model.dto.ArtworkCommentIdResponse;
+import org.ject.momentia.api.artwork.model.dto.ArtworkCommentListResponse;
+import org.ject.momentia.api.artwork.model.dto.ArtworkCommentModel;
+import org.ject.momentia.api.artwork.model.dto.ArtworkCommentRequest;
 import org.ject.momentia.api.artwork.repository.cache.ArtworkPostCacheRepository;
+import org.ject.momentia.api.artwork.repository.jpa.ArtworkCommentRepository;
 import org.ject.momentia.api.artwork.service.module.ArtworkPostModuleService;
 import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.api.image.service.ImageService;

@@ -1,4 +1,4 @@
-package org.ject.momentia.api.artwork.repository.cache.model;
+package org.ject.momentia.api.artwork.model.cache;
 
 import java.io.Serializable;
 import java.util.Arrays;

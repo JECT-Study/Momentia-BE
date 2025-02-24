@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.ject.momentia.api.artwork.converter.ArtworkPostConverter;
-import org.ject.momentia.api.artwork.model.ArtworkPostModel;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostModel;
 import org.ject.momentia.api.artwork.service.module.ArtworkLikeModuleService;
 import org.ject.momentia.api.artwork.service.module.ArtworkPostModuleService;
 import org.ject.momentia.api.follow.service.module.FollowModuleService;
@@ -62,8 +62,9 @@ public class MonthlyService {
 					ArtworkPost post = idToPostMap.get(p.getPost().getId());
 					Boolean isLiked = user != null && artworkLikeService.isLiked(user, post);
 					String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK, post.getId());
-					Long addCount = artworkLikeService.getLikeCountRDBAndCacheSum(post.getId());
-					return ArtworkPostConverter.toArtworkPostModel(post, isLiked, imageUrl, addCount);
+					Long addLikeCount = artworkLikeService.getLikeCountRDBAndCacheSum(post.getId());
+					Long addViewCount = artworkService.getViewCountInCache(post.getId());
+					return ArtworkPostConverter.toArtworkPostModel(post, isLiked, imageUrl, addLikeCount, addViewCount);
 				}
 			)
 			.toList();

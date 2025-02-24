@@ -1,4 +1,4 @@
-package org.ject.momentia.api.artwork.repository;
+package org.ject.momentia.api.artwork.repository.jpa;
 
 import java.util.List;
 

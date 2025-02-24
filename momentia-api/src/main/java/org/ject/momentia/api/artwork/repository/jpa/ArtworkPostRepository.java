@@ -1,10 +1,10 @@
-package org.ject.momentia.api.artwork.repository;
+package org.ject.momentia.api.artwork.repository.jpa;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.ject.momentia.api.artwork.model.FollowingUserPostProjection;
+import org.ject.momentia.api.artwork.model.dto.FollowingUserPostProjection;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.artwork.type.ArtworkPostStatus;
 import org.ject.momentia.common.domain.artwork.type.Category;

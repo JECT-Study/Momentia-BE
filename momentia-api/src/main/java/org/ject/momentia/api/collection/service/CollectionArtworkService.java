@@ -3,9 +3,9 @@ package org.ject.momentia.api.collection.service;
 import java.util.List;
 
 import org.ject.momentia.api.artwork.converter.ArtworkPostConverter;
-import org.ject.momentia.api.artwork.model.ArtworkPostModel;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostModel;
 import org.ject.momentia.api.artwork.model.type.ArtworkPostSort;
-import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
+import org.ject.momentia.api.artwork.repository.jpa.ArtworkPostRepository;
 import org.ject.momentia.api.artwork.service.module.ArtworkLikeModuleService;
 import org.ject.momentia.api.artwork.service.module.ArtworkPostModuleService;
 import org.ject.momentia.api.collection.converter.CollectionArtworkConverter;
@@ -86,8 +86,9 @@ public class CollectionArtworkService {
 			.map((p) -> {
 					String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK, p.getId());
 					Boolean isLiked = artworkLikeService.isLiked(user, p);
-					Long addCount = artworkLikeService.getLikeCountRDBAndCacheSum(p.getId());
-					return ArtworkPostConverter.toArtworkPostModel(p, isLiked, imageUrl, addCount);
+					Long addLikeCount = artworkLikeService.getLikeCountRDBAndCacheSum(p.getId());
+					Long addViewCount = artworkService.getViewCountInCache(p.getId());
+					return ArtworkPostConverter.toArtworkPostModel(p, isLiked, imageUrl, addLikeCount, addViewCount);
 				}
 			)
 			.toList();

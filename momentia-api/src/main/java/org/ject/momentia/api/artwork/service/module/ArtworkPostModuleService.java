@@ -4,8 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
+import org.ject.momentia.api.artwork.model.cache.ArtworkViewCacheModel;
+import org.ject.momentia.api.artwork.repository.cache.ArtworkViewCacheRepository;
 import org.ject.momentia.api.artwork.repository.cache.PageIdsCacheRepository;
+import org.ject.momentia.api.artwork.repository.jpa.ArtworkPostRepository;
 import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.artwork.type.ArtworkPostStatus;
@@ -21,6 +23,7 @@ public class ArtworkPostModuleService {
 	private final ArtworkPostRepository artworkPostRepository;
 	private final PageIdsCacheRepository pageIdsCacheRepository;
 	private final RedisTemplate<String, String> redisTemplate;
+	private final ArtworkViewCacheRepository artworkViewCacheRepository;
 
 	public List<ArtworkPost> getPostsByIds(List<Long> postIds) {
 		return artworkPostRepository.findAllByIdIn(postIds);
@@ -41,6 +44,12 @@ public class ArtworkPostModuleService {
 
 	public ArtworkPost findPostByIdElseReturnNull(Long postId) {
 		return artworkPostRepository.findById(postId).orElse(null);
+	}
+
+	public Long getViewCountInCache(Long artworkPostId) {
+		ArtworkViewCacheModel artworkViewCacheModel = artworkViewCacheRepository.findById(artworkPostId)
+			.orElse(null);
+		return artworkViewCacheModel == null ? 0L : artworkViewCacheModel.getView();
 	}
 
 	public void deleteAllPageIdsCache() {

@@ -1,4 +1,4 @@
-package org.ject.momentia.api.artwork.repository.cache.model;
+package org.ject.momentia.api.artwork.model.cache;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;

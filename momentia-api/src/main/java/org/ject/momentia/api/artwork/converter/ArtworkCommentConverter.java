@@ -1,6 +1,6 @@
 package org.ject.momentia.api.artwork.converter;
 
-import org.ject.momentia.api.artwork.model.ArtworkCommentModel;
+import org.ject.momentia.api.artwork.model.dto.ArtworkCommentModel;
 import org.ject.momentia.common.domain.artwork.ArtworkComment;
 import org.ject.momentia.common.domain.user.User;
 
