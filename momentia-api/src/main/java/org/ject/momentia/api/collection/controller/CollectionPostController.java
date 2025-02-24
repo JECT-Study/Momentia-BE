@@ -1,6 +1,6 @@
 package org.ject.momentia.api.collection.controller;
 
-import org.ject.momentia.api.artwork.model.ArtworkPostModel;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostModel;
 import org.ject.momentia.api.artwork.model.type.ArtworkPostSort;
 import org.ject.momentia.api.collection.model.CollectionArtworkCreateResponse;
 import org.ject.momentia.api.collection.service.CollectionArtworkService;

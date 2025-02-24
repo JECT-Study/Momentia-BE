@@ -7,10 +7,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.ject.momentia.api.artwork.repository.ArtworkLikeRepository;
-import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
+import org.ject.momentia.api.artwork.model.cache.ArtworkLikeCacheModel;
 import org.ject.momentia.api.artwork.repository.cache.ArtworkLikeCacheRepository;
-import org.ject.momentia.api.artwork.repository.cache.model.ArtworkLikeCacheModel;
+import org.ject.momentia.api.artwork.repository.jpa.ArtworkLikeRepository;
+import org.ject.momentia.api.artwork.repository.jpa.ArtworkPostRepository;
 import org.ject.momentia.common.domain.artwork.ArtworkLikeId;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.user.User;

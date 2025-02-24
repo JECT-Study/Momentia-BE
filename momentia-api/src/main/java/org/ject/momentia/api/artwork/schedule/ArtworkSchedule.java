@@ -1,6 +1,6 @@
 package org.ject.momentia.api.artwork.schedule;
 
-import org.ject.momentia.api.artwork.schedule.service.ArtworkScheduleService;
+import org.ject.momentia.api.artwork.service.ArtworkScheduleService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,18 +14,10 @@ public class ArtworkSchedule {
 
 	private final ArtworkScheduleService artworkScheduleService;
 
-	@Scheduled(fixedRate = 180000)
-	public void migrateLikesToDB() {
+	@Scheduled(fixedRate = 120000)
+	public void migrateLikesAndViewToDB() {
 		artworkScheduleService.migrateLikesToDB();
-	}
-
-	@Scheduled(fixedRate = 180000)
-	public void migrateViewToDB() {
 		artworkScheduleService.migrateViewToDB();
-	}
-
-	@Scheduled(fixedRate = 3600000)
-	public void deleteAllPageIds() {
 		artworkScheduleService.deleteAllPostIds();
 	}
 

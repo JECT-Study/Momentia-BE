@@ -1,11 +1,11 @@
 package org.ject.momentia.api.artwork.controller;
 
-import org.ject.momentia.api.artwork.model.ArtworkFollowingUserPostsResponse;
-import org.ject.momentia.api.artwork.model.ArtworkPostCreateRequest;
-import org.ject.momentia.api.artwork.model.ArtworkPostIdResponse;
-import org.ject.momentia.api.artwork.model.ArtworkPostModel;
-import org.ject.momentia.api.artwork.model.ArtworkPostResponse;
-import org.ject.momentia.api.artwork.model.ArtworkPostUpdateRequest;
+import org.ject.momentia.api.artwork.model.dto.ArtworkFollowingUserPostsResponse;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostCreateRequest;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostIdResponse;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostModel;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostResponse;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostUpdateRequest;
 import org.ject.momentia.api.artwork.model.type.ArtworkPostSort;
 import org.ject.momentia.api.artwork.service.ArtworkPostService;
 import org.ject.momentia.api.config.CookieUtil;
@@ -76,7 +76,7 @@ public class ArtworkController {
 
 	private boolean updateViewedPosts(Long postId, HttpServletRequest request, HttpServletResponse response) {
 		String cookieName = "viewed_posts";
-		int cookieExpireTime = 60; // 1분
+		int cookieExpireTime = 3600; // 1시간
 		String viewedPosts = CookieUtil.getCookieValue(request, cookieName).orElse("");
 
 		// 게시글을 본 적이 없으면

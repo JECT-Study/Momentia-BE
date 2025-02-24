@@ -1,4 +1,4 @@
-package org.ject.momentia.api.artwork.schedule.service;
+package org.ject.momentia.api.artwork.service;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -6,13 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ject.momentia.api.artwork.repository.ArtworkLikeRepository;
-import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
+import org.ject.momentia.api.artwork.model.cache.ArtworkLikeCacheModel;
 import org.ject.momentia.api.artwork.repository.cache.ArtworkLikeCacheRepository;
 import org.ject.momentia.api.artwork.repository.cache.ArtworkPostCacheRepository;
 import org.ject.momentia.api.artwork.repository.cache.ArtworkViewCacheRepository;
-import org.ject.momentia.api.artwork.repository.cache.PageIdsCacheRepository;
-import org.ject.momentia.api.artwork.repository.cache.model.ArtworkLikeCacheModel;
+import org.ject.momentia.api.artwork.repository.jpa.ArtworkLikeRepository;
+import org.ject.momentia.api.artwork.repository.jpa.ArtworkPostRepository;
 import org.ject.momentia.api.artwork.service.module.ArtworkPostModuleService;
 import org.ject.momentia.api.user.repository.UserRepository;
 import org.ject.momentia.common.domain.artwork.ArtworkLike;
@@ -29,13 +28,10 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ArtworkScheduleService {
 
-	private final ArtworkPostModuleService artworkService;
 	private final ArtworkLikeRepository artworkLikeRepository;
-
 	private final ArtworkLikeCacheRepository artworkLikeCacheRepository;
 	private final UserRepository userRepository;
 	private final ArtworkPostRepository artworkPostRepository;
-	private final PageIdsCacheRepository pagesIdsCacheRepository;
 	private final ArtworkPostCacheRepository artworkPostCacheRepository;
 	private final ArtworkViewCacheRepository artworkViewCacheRepository;
 	private final ArtworkPostModuleService artworkPostModuleService;

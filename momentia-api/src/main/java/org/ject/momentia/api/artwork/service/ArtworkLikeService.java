@@ -2,12 +2,12 @@ package org.ject.momentia.api.artwork.service;
 
 import java.util.HashMap;
 
-import org.ject.momentia.api.artwork.repository.ArtworkLikeRepository;
-import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
+import org.ject.momentia.api.artwork.model.cache.ArtworkLikeCacheModel;
 import org.ject.momentia.api.artwork.repository.cache.ArtworkLikeCacheRepository;
 import org.ject.momentia.api.artwork.repository.cache.ArtworkPostCacheRepository;
 import org.ject.momentia.api.artwork.repository.cache.PageIdsCacheRepository;
-import org.ject.momentia.api.artwork.repository.cache.model.ArtworkLikeCacheModel;
+import org.ject.momentia.api.artwork.repository.jpa.ArtworkLikeRepository;
+import org.ject.momentia.api.artwork.repository.jpa.ArtworkPostRepository;
 import org.ject.momentia.api.artwork.service.module.ArtworkPostModuleService;
 import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.api.user.repository.UserRepository;
