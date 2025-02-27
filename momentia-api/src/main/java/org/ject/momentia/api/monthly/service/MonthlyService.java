@@ -10,7 +10,10 @@ import org.ject.momentia.api.artwork.service.module.ArtworkLikeModuleService;
 import org.ject.momentia.api.artwork.service.module.ArtworkPostModuleService;
 import org.ject.momentia.api.follow.service.module.FollowModuleService;
 import org.ject.momentia.api.image.service.ImageService;
+import org.ject.momentia.api.monthly.converter.MonthlyPostConverter;
 import org.ject.momentia.api.monthly.converter.MonthlyUserConverter;
+import org.ject.momentia.api.monthly.model.ExhibitionPopularResponse;
+import org.ject.momentia.api.monthly.model.ExhibitionPostModel;
 import org.ject.momentia.api.monthly.model.MonthlyPostsResponse;
 import org.ject.momentia.api.monthly.model.MonthlyUsersResponse;
 import org.ject.momentia.api.monthly.model.UserListModel;
@@ -70,6 +73,34 @@ public class MonthlyService {
 			.toList();
 
 		return new MonthlyPostsResponse(postModelList);
+	}
+
+	@Transactional
+	public ExhibitionPopularResponse getExhibitionPopular() {
+		List<MonthlyArtwork> artworkList = monthlyPostRepository.findAllByMonthAndYearOrderByRankAsc(12, 2024);
+		if (artworkList.size() > 10) {
+			artworkList = artworkList.subList(0, 10);
+		}
+		List<Long> ids = artworkList.stream().map((a) -> a.getPost().getId()).toList();
+
+		// id들 보내면, post List 반환 하는 service 함수 , public 작품만 반환
+		List<ArtworkPost> posts = artworkService.getPostsByIdsAndStatus(ids, ArtworkPostStatus.PUBLIC);
+
+		// id 값으로 post 찾을 수 있도록 map 생성  ( artworkList 순서 유지를 위함 )
+		Map<Long, ArtworkPost> idToPostMap = posts.stream().filter(post -> ids.contains(post.getId()))
+			.collect(Collectors.toMap(ArtworkPost::getId, post -> post
+			));
+
+		List<ExhibitionPostModel> postModelList = artworkList.stream()
+			.map((p) -> {
+					ArtworkPost post = idToPostMap.get(p.getPost().getId());
+					String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK, post.getId());
+					return MonthlyPostConverter.toExhibitionPostModel(post, imageUrl);
+				}
+			)
+			.toList();
+
+		return new ExhibitionPopularResponse(postModelList);
 	}
 
 	@Transactional
