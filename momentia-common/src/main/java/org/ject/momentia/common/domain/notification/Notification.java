@@ -1,8 +1,9 @@
-package org.ject.momentia.api.notification.entity;
+package org.ject.momentia.common.domain.notification;
 
 import java.time.Instant;
 
-import org.ject.momentia.api.notification.type.NotificationType;
+import org.ject.momentia.common.domain.artwork.ArtworkPost;
+import org.ject.momentia.common.domain.notification.type.NotificationType;
 import org.ject.momentia.common.domain.user.User;
 
 import jakarta.persistence.Column;
@@ -16,37 +17,40 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "notification", schema = "momentia")
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Notification {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@NotNull
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
+	@JoinColumn(name = "user_id")
+	@ManyToOne
+	private User user;
 
-	@Size(max = 30)
 	@NotNull
-	@Column(name = "type", nullable = false, length = 30)
 	@Enumerated(EnumType.STRING)
 	private NotificationType type;
 
-	@Column(name = "target_post_id")
-	private Long targetPostId;
+	@JoinColumn(name = "target_post_id")
+	@ManyToOne
+	private ArtworkPost targetPost;
 
-	@Size(max = 15)
 	@NotNull
 	@Column(name = "read_status", nullable = false, length = 15)
-	private String readStatus;
+	private boolean isRead;
 
 	@JoinColumn(name = "target_user_id")
 	@ManyToOne

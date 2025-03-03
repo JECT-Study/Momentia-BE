@@ -1,6 +1,6 @@
-package org.ject.momentia.api.notification.entity;
+package org.ject.momentia.common.domain.notification;
 
-import org.ject.momentia.api.notification.type.NotificationType;
+import org.ject.momentia.common.domain.notification.type.NotificationType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,7 +23,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class NotificationSetting {
 	@Id
-	@Column(name = "userId", nullable = false)
+	@Column(name = "user_id", nullable = false)
 	private Long id;
 
 	@NotNull
@@ -75,14 +75,14 @@ public class NotificationSetting {
 
 	public void updateSetting(NotificationType type, boolean value) {
 		switch (type) {
-			case LIKE_ON_MY_ARTWORK -> likeOnMyArtwork = value;
-			case COMMENT_ON_MY_ARTWORK -> commentOnMyArtwork = value;
-			case FOLLOWED_BY_USER -> followedByUser = value;
-			case POPULAR_ARTWORK -> popularArtwork = value;
-			case ARTIST_OF_THE_MONTH -> artistOfTheMonth = value;
-			case LIKE_ON_COMMUNITY_POST -> likeOnCommunityPost = value;
-			case COMMENT_ON_COMMUNITY_POST -> commentOnCommunityPost = value;
-			case COMMENT_ON_REPLIED_POST -> commentOnRepliedPost = value;
+			case NotificationType.LIKE_ON_MY_ARTWORK -> likeOnMyArtwork = value;
+			case NotificationType.COMMENT_ON_MY_ARTWORK -> commentOnMyArtwork = value;
+			case NotificationType.FOLLOWED_BY_USER -> followedByUser = value;
+			case NotificationType.POPULAR_ARTWORK -> popularArtwork = value;
+			case NotificationType.ARTIST_OF_THE_MONTH -> artistOfTheMonth = value;
+			case NotificationType.LIKE_ON_COMMUNITY_POST -> likeOnCommunityPost = value;
+			case NotificationType.COMMENT_ON_COMMUNITY_POST -> commentOnCommunityPost = value;
+			case NotificationType.COMMENT_ON_REPLIED_POST -> commentOnRepliedPost = value;
 		}
 	}
 }

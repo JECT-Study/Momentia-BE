@@ -2,7 +2,7 @@ package org.ject.momentia.api.notification.model;
 
 import java.time.LocalDateTime;
 
-import org.ject.momentia.api.notification.type.NotificationType;
+import org.ject.momentia.common.domain.notification.type.NotificationType;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

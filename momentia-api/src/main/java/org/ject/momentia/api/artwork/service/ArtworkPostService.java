@@ -189,7 +189,7 @@ public class ArtworkPostService {
 	}
 
 	private List<ArtworkPostModel> IdListToArtworkPostModelList(List<Long> ids, User user) {
-		List<ArtworkPostModel> postModelList = ids.stream().map((id) -> {
+		return ids.stream().map((id) -> {
 			/// Todo : idList 넘겨서 rdb 한번 찌르는 로직으로 수정
 
 			ArtworkPostCacheModel artworkPostCacheModel = artworkPostCacheRepository.findById(id).orElse(null);
@@ -213,7 +213,6 @@ public class ArtworkPostService {
 			}
 
 		}).toList();
-		return postModelList;
 	}
 
 	@Transactional

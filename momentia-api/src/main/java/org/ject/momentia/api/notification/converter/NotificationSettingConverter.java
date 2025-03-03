@@ -4,9 +4,9 @@ import static org.ject.momentia.api.notification.model.UserNotificationSettingIn
 
 import java.util.Arrays;
 
-import org.ject.momentia.api.notification.entity.NotificationSetting;
 import org.ject.momentia.api.notification.model.UserNotificationSettingInfo;
-import org.ject.momentia.api.notification.type.NotificationType;
+import org.ject.momentia.common.domain.notification.NotificationSetting;
+import org.ject.momentia.common.domain.notification.type.NotificationType;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
