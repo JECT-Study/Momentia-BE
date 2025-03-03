@@ -15,8 +15,10 @@ import org.ject.momentia.api.artwork.repository.jpa.ArtworkCommentRepository;
 import org.ject.momentia.api.artwork.service.module.ArtworkPostModuleService;
 import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.api.image.service.ImageService;
+import org.ject.momentia.api.notification.service.NotificationPublishService;
 import org.ject.momentia.common.domain.artwork.ArtworkComment;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
+import org.ject.momentia.common.domain.notification.type.NotificationType;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,8 @@ public class ArtworkCommentService {
 	private final ArtworkPostModuleService artworkService;
 	private final ArtworkPostCacheRepository artworkPostCacheRepository;
 
+	private final NotificationPublishService notificationPublishService;
+
 	@Transactional
 	public ArtworkCommentIdResponse createComment(User user, Long postId,
 		ArtworkCommentRequest artworkCommentCreateRequest) {
@@ -43,6 +47,7 @@ public class ArtworkCommentService {
 		post.increaseCommentCount();
 		artworkPostCacheRepository.deleteById(post.getId());
 
+		notificationPublishService.publish(NotificationType.COMMENT_ON_MY_ARTWORK, user, post.getUser(), post);
 		return new ArtworkCommentIdResponse(comment.getId());
 	}
 

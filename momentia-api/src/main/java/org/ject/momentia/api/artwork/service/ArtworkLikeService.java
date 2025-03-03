@@ -10,10 +10,12 @@ import org.ject.momentia.api.artwork.repository.jpa.ArtworkLikeRepository;
 import org.ject.momentia.api.artwork.repository.jpa.ArtworkPostRepository;
 import org.ject.momentia.api.artwork.service.module.ArtworkPostModuleService;
 import org.ject.momentia.api.exception.ErrorCd;
+import org.ject.momentia.api.notification.service.NotificationPublishService;
 import org.ject.momentia.api.user.repository.UserRepository;
 import org.ject.momentia.common.domain.artwork.ArtworkLike;
 import org.ject.momentia.common.domain.artwork.ArtworkLikeId;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
+import org.ject.momentia.common.domain.notification.type.NotificationType;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,7 @@ public class ArtworkLikeService {
 	private final ArtworkPostRepository artworkPostRepository;
 	private final PageIdsCacheRepository pagesIdsCacheRepository;
 	private final ArtworkPostCacheRepository artworkPostCacheRepository;
+	private final NotificationPublishService notificationPublishService;
 
 	@Transactional
 	public void like(User user, Long postId) {
@@ -59,6 +62,10 @@ public class ArtworkLikeService {
 		// 	artworkPostCacheRepository.save(artworkPostCacheModel);
 		// }
 
+		// artworkLikeCacheRepository.save(likeCacheModel);
+		artworkPostCacheRepository.deleteById(post.getId());
+		post.increaseLikeCount();
+		notificationPublishService.publish(NotificationType.LIKE_ON_MY_ARTWORK, user, post.getUser(), post);
 	}
 
 	// @Transactional

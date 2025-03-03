@@ -6,9 +6,11 @@ import org.ject.momentia.api.follow.model.FollowResponse;
 import org.ject.momentia.api.follow.model.FollowUserRequest;
 import org.ject.momentia.api.follow.repository.FollowRepository;
 import org.ject.momentia.api.follow.service.module.FollowModuleService;
+import org.ject.momentia.api.notification.service.NotificationPublishService;
 import org.ject.momentia.api.user.repository.UserRepository;
 import org.ject.momentia.api.user.service.AccountService;
 import org.ject.momentia.common.domain.follow.FollowId;
+import org.ject.momentia.common.domain.notification.type.NotificationType;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ public class FollowService {
 	private final AccountService accountService;
 
 	private final FollowModuleService followModule;
+	private final NotificationPublishService notificationPublishService;
 
 	@Transactional
 	public void follow(User user, FollowUserRequest followingId) {
@@ -36,6 +39,8 @@ public class FollowService {
 		followingUser.increaseFollowerCount();
 		user.increaseFollowingCount(); // Detached 상태이므로 save 필요
 		userRepository.save(user);
+
+		notificationPublishService.publish(NotificationType.FOLLOWED_BY_USER, user, followingUser, null);
 	}
 
 	@Transactional

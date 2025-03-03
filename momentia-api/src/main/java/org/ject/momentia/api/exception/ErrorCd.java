@@ -51,6 +51,10 @@ public enum ErrorCd {
 	COLLECTION_ARTWORK_ALREADY_REMOVED(HttpStatus.CONFLICT, "already removed or not exist"),
 	INVALID_COLLECTION_NAME(HttpStatus.BAD_REQUEST, "Invalid collection name"),
 
+	// notification Error
+	NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "notification not found"),
+	NOT_OWNER(HttpStatus.FORBIDDEN, "not owner"),
+
 	// Image Error
 	IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "image not found"),
 	IMAGE_ALREADY_PROCESSED(HttpStatus.CONFLICT, "Image already processed"),

@@ -21,6 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 계정, 회원 관련 Service
+ */
 @Service
 @RequiredArgsConstructor
 public class AccountService {
@@ -33,8 +36,9 @@ public class AccountService {
 	/**
 	 * 이메일을 검증한다.
 	 * input validation 을 통해 이메일 형식은 검증되었으므로, 존재 여부만 검증한다.
-	 * @param email
+	 * @param email 검증할 이메일
 	 */
+	@Transactional(readOnly = true)
 	public void validateEmail(String email) {
 		if (userRepository.existsByEmail(email)) {
 			throw ErrorCd.DUPLICATE_EMAIL.serviceException();
@@ -44,8 +48,9 @@ public class AccountService {
 	/**
 	 * 닉네임을 검증한다.
 	 * input validation 을 통해 닉네임 형식은 검증되었으므로, 존재 여부만 검증한다.
-	 * @param nickname
+	 * @param nickname    검증할 닉네임
 	 */
+	@Transactional(readOnly = true)
 	public void validateNickname(String nickname) {
 		if (userRepository.existsByNickname(nickname)) {
 			throw ErrorCd.DUPLICATE_NICKNAME.serviceException();
@@ -54,6 +59,11 @@ public class AccountService {
 		// TODO: 금칙어 설정
 	}
 
+	/**
+	 * 회원가입을 수행한다.
+	 * @param registerRequest
+	 * @return
+	 */
 	@Transactional
 	public AuthorizationToken register(NormalRegisterRequest registerRequest) {
 		validateEmail(registerRequest.email());
