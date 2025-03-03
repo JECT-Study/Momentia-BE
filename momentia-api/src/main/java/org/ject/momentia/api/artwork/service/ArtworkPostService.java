@@ -6,25 +6,26 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.ject.momentia.api.artwork.converter.ArtworkPostConverter;
-import org.ject.momentia.api.artwork.model.ArtworkFollowingUserPostModel;
-import org.ject.momentia.api.artwork.model.ArtworkFollowingUserPostsResponse;
-import org.ject.momentia.api.artwork.model.ArtworkPostCreateRequest;
-import org.ject.momentia.api.artwork.model.ArtworkPostIdResponse;
-import org.ject.momentia.api.artwork.model.ArtworkPostModel;
-import org.ject.momentia.api.artwork.model.ArtworkPostResponse;
-import org.ject.momentia.api.artwork.model.ArtworkPostUpdateRequest;
-import org.ject.momentia.api.artwork.model.FollowingUserModel;
-import org.ject.momentia.api.artwork.model.FollowingUserPostProjection;
+import org.ject.momentia.api.artwork.model.cache.ArtworkPostCacheModel;
+import org.ject.momentia.api.artwork.model.cache.ArtworkViewCacheModel;
+import org.ject.momentia.api.artwork.model.cache.PageIdsCacheModel;
+import org.ject.momentia.api.artwork.model.dto.ArtworkFollowingUserPostModel;
+import org.ject.momentia.api.artwork.model.dto.ArtworkFollowingUserPostsResponse;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostCreateRequest;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostIdResponse;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostModel;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostResponse;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostUpdateRequest;
+import org.ject.momentia.api.artwork.model.dto.FollowingUserModel;
+import org.ject.momentia.api.artwork.model.dto.FollowingUserPostProjection;
 import org.ject.momentia.api.artwork.model.type.ArtworkPostSort;
-import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
 import org.ject.momentia.api.artwork.repository.cache.ArtworkPostCacheRepository;
 import org.ject.momentia.api.artwork.repository.cache.ArtworkViewCacheRepository;
 import org.ject.momentia.api.artwork.repository.cache.PageIdsCacheRepository;
-import org.ject.momentia.api.artwork.repository.cache.model.ArtworkPostCacheModel;
-import org.ject.momentia.api.artwork.repository.cache.model.ArtworkViewCacheModel;
-import org.ject.momentia.api.artwork.repository.cache.model.PageIdsCacheModel;
+import org.ject.momentia.api.artwork.repository.jpa.ArtworkPostRepository;
 import org.ject.momentia.api.artwork.service.module.ArtworkCommentModuleService;
 import org.ject.momentia.api.artwork.service.module.ArtworkLikeModuleService;
+import org.ject.momentia.api.artwork.service.module.ArtworkPostModuleService;
 import org.ject.momentia.api.collection.service.module.CollectionArtworkModuleService;
 import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.api.follow.service.module.FollowModuleService;
@@ -62,6 +63,7 @@ public class ArtworkPostService {
 	private final ArtworkLikeModuleService artworkLikeService;
 	private final ArtworkCommentModuleService artworkCommentService;
 	private final ArtworkPostCacheRepository artworkPostCacheRepository;
+	private final ArtworkPostModuleService artworkPostModuleService;
 
 	private final PageIdsCacheRepository pageIdsCacheRepository;
 	private final ArtworkViewCacheRepository artworkViewCacheRepository;
@@ -74,6 +76,8 @@ public class ArtworkPostService {
 
 		imageService.useImageToService(artworkPostCreateRequest.postImage(), ImageTargetType.ARTWORK,
 			artworkPost.getId());
+
+		artworkPostModuleService.deleteAllPageIdsCache();
 
 		return ArtworkPostConverter.toArtworkPostIdResponse(artworkPost);
 	}
@@ -100,8 +104,17 @@ public class ArtworkPostService {
 			artworkViewCacheRepository.save(artworkViewCacheModel);
 		}
 
-		return ArtworkPostConverter.toArtworkPostResponse(artworkPost, isMine, isLiked, postImage, isFollow);
+		Long addLikeCount = artworkLikeService.getLikeCountRDBAndCacheSum(artworkPost.getId());
+		Long addViewCount = artworkPostModuleService.getViewCountInCache(artworkPost.getId());
+		return ArtworkPostConverter.toArtworkPostResponse(artworkPost, isMine, isLiked, postImage, isFollow,
+			addLikeCount, addViewCount);
 	}
+
+	// public Long getViewCountInCache(Long artworkPostId) {
+	// 	ArtworkViewCacheModel artworkViewCacheModel = artworkViewCacheRepository.findById(artworkPostId)
+	// 		.orElse(null);
+	// 	return artworkViewCacheModel == null ? 0L : artworkViewCacheModel.getView();
+	// }
 
 	@Transactional
 	public void deletePost(User user, Long postId) {
@@ -118,7 +131,7 @@ public class ArtworkPostService {
 		artworkLikeService.deleteAllByArtwork(artworkPost);
 
 		artworkPostCacheRepository.deleteById(artworkPost.getId());
-		pageIdsCacheRepository.deleteAll();
+		artworkPostModuleService.deleteAllPageIdsCache();
 	}
 
 	@Transactional
@@ -171,19 +184,19 @@ public class ArtworkPostService {
 		Page<Long> pages;
 
 		/// 레디스에 키 값에 해당하는 id List 검색
-		/// ********* 캐시 삭제 에러로 캐시 조회 부분 잠시 삭제 -> 버그 수정하고 다시 캐시 적용 할 예정
-		PageIdsCacheModel pageIdsCacheModel = null;  //pageIdsCacheRepository.findById(key).orElse(null);
+		PageIdsCacheModel pageIdsCacheModel =
+			keyword == null ? null : pageIdsCacheRepository.findById(key).orElse(null);
 
 		/// 캐시에 저장되어 있지 않다면, rdb에서 가져온다.
 		if (pageIdsCacheModel == null) {
-			if (keyword == null)
+			if (keyword == null) {
 				pages = artworkPostRepository.findByIdListCategoryAndStatus(category, pageable);
-			else
+				pageIdsCacheModel = pageIdsCacheRepository.save(new PageIdsCacheModel(key, pages));
+			} else {
 				pages = artworkPostRepository.findByIdListCategoryAndStatusAndKeyword(category, keyword, pageable);
-			/// 잠시 삭제 pageIdsCacheModel = pageIdsCacheRepository.save(new PageIdsCacheModel(key, pages));
-			pageIdsCacheModel = new PageIdsCacheModel(key, pages);
+				pageIdsCacheModel = new PageIdsCacheModel(key, pages);
+			}
 		}
-
 		return pageIdsCacheModel;
 
 	}
@@ -200,7 +213,12 @@ public class ArtworkPostService {
 				Boolean isLiked = artworkLikeService.isLiked(user, artworkPost);
 				ArtworkPostCacheModel newArtworkPostCacheModel = new ArtworkPostCacheModel(artworkPost, imageUrl);
 				artworkPostCacheRepository.save(newArtworkPostCacheModel);
-				return ArtworkPostConverter.toArtworkPostModel(artworkPost, isLiked, imageUrl);
+
+				Long addLikeCount = artworkLikeService.getLikeCountRDBAndCacheSum(artworkPost.getId());
+				Long addViewCount = artworkPostModuleService.getViewCountInCache(artworkPost.getId());
+
+				return ArtworkPostConverter.toArtworkPostModel(artworkPost, isLiked, imageUrl, addLikeCount,
+					addViewCount);
 			}
 			// 있으면
 			else {
@@ -208,8 +226,10 @@ public class ArtworkPostService {
 				User author = userRepository.findById(artworkPostCacheModel.getUserId())
 					.orElseThrow(ErrorCd.USER_NOT_FOUND::serviceException);
 				String nickname = author.getNickname();
+				Long addLikeCount = artworkLikeService.getLikeCountRDBAndCacheSum(artworkPostCacheModel.getId());
+				Long addViewCount = artworkPostModuleService.getViewCountInCache(artworkPostCacheModel.getId());
 				return ArtworkPostConverter.ArtworkPostCacheModeltoArtworkPostModel(artworkPostCacheModel, isLiked,
-					nickname);
+					nickname, addLikeCount, addViewCount);
 			}
 
 		}).toList();
@@ -236,8 +256,11 @@ public class ArtworkPostService {
 				if (p.getUserId().equals(u.getUserId())) {
 					String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK, p.getId());
 					Boolean isLiked = artworkLikeService.isLikedByPostId(user, p.getId());
+					Long addLikeCount = artworkLikeService.getLikeCountRDBAndCacheSum(p.getId());
+					Long addViewCount = artworkPostModuleService.getViewCountInCache(p.getId());
 					u.getPosts().add(
-						ArtworkPostConverter.toArtworkFollowingUserPostModel(p, imageUrl, isLiked)
+						ArtworkPostConverter.toArtworkFollowingUserPostModel(p, imageUrl, isLiked, addLikeCount,
+							addViewCount)
 					);
 				}
 			}
@@ -272,7 +295,10 @@ public class ArtworkPostService {
 			.map((p) -> {
 					String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK, p.getId());
 					Boolean isLiked = artworkLikeService.isLiked(user, p);
-					return ArtworkPostConverter.toArtworkPostModel(p, isLiked, imageUrl);
+					Long addLikeCount = artworkLikeService.getLikeCountRDBAndCacheSum(p.getId());
+					Long addViewCount = artworkPostModuleService.getViewCountInCache(p.getId());
+
+					return ArtworkPostConverter.toArtworkPostModel(p, isLiked, imageUrl, addLikeCount, addViewCount);
 				}
 			)
 			.toList();
@@ -302,7 +328,10 @@ public class ArtworkPostService {
 			.map((p) -> {
 					String imageUrl = imageService.getImageUrl(ImageTargetType.ARTWORK, p.getId());
 					Boolean isLiked = true; // 무조건 true로 세팅
-					return ArtworkPostConverter.toArtworkPostModel(p, isLiked, imageUrl);
+					Long addLikeCount = artworkLikeService.getLikeCountRDBAndCacheSum(p.getId());
+					Long addViewCount = artworkPostModuleService.getViewCountInCache(p.getId());
+
+					return ArtworkPostConverter.toArtworkPostModel(p, isLiked, imageUrl, addLikeCount, addViewCount);
 				}
 			)
 			.toList();

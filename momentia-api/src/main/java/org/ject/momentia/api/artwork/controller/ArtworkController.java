@@ -1,11 +1,11 @@
 package org.ject.momentia.api.artwork.controller;
 
-import org.ject.momentia.api.artwork.model.ArtworkFollowingUserPostsResponse;
-import org.ject.momentia.api.artwork.model.ArtworkPostCreateRequest;
-import org.ject.momentia.api.artwork.model.ArtworkPostIdResponse;
-import org.ject.momentia.api.artwork.model.ArtworkPostModel;
-import org.ject.momentia.api.artwork.model.ArtworkPostResponse;
-import org.ject.momentia.api.artwork.model.ArtworkPostUpdateRequest;
+import org.ject.momentia.api.artwork.model.dto.ArtworkFollowingUserPostsResponse;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostCreateRequest;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostIdResponse;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostModel;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostResponse;
+import org.ject.momentia.api.artwork.model.dto.ArtworkPostUpdateRequest;
 import org.ject.momentia.api.artwork.model.type.ArtworkPostSort;
 import org.ject.momentia.api.artwork.service.ArtworkPostService;
 import org.ject.momentia.api.config.CookieUtil;
@@ -13,8 +13,6 @@ import org.ject.momentia.api.mvc.annotation.EnumValue;
 import org.ject.momentia.api.mvc.annotation.MomentiaUser;
 import org.ject.momentia.api.pagination.model.PaginationResponse;
 import org.ject.momentia.api.pagination.model.PaginationWithIsMineResponse;
-import org.ject.momentia.api.test.testCacheModel;
-import org.ject.momentia.api.test.testCacheRepository;
 import org.ject.momentia.common.domain.artwork.type.Category;
 import org.ject.momentia.common.domain.user.User;
 import org.springframework.http.HttpStatus;
@@ -41,7 +39,6 @@ import lombok.RequiredArgsConstructor;
 public class ArtworkController {
 
 	private final ArtworkPostService artworkPostService;
-	private final testCacheRepository testRepository;
 
 	/**
 	 * [POST] 작품 업로드
@@ -79,7 +76,7 @@ public class ArtworkController {
 
 	private boolean updateViewedPosts(Long postId, HttpServletRequest request, HttpServletResponse response) {
 		String cookieName = "viewed_posts";
-		int cookieExpireTime = 60; // 1분
+		int cookieExpireTime = 3600; // 1시간
 		String viewedPosts = CookieUtil.getCookieValue(request, cookieName).orElse("");
 
 		// 게시글을 본 적이 없으면
@@ -173,50 +170,4 @@ public class ArtworkController {
 		return artworkPostService.getLikePosts(sort, page, size, user);
 	}
 
-	/**
-	 * 테스트 용 API - 추후 삭제
-	 */
-	@GetMapping("/redis/{num}")
-	@ResponseStatus(HttpStatus.OK)
-	public String getTestCache(@PathVariable Long num) {
-		if (testRepository.findById(num).isPresent()) {
-			return "기존 - " + testRepository.findById(num).get().getName();
-		} else
-			return "새로 생성 - " + testRepository.save(new testCacheModel(num, "name" + num)).getName();
-	}
-
-	/**
-	 * 테스트 용 API - 추후 삭제
-	 */
-	@GetMapping("/redis/{num}/delete")
-	@ResponseStatus(HttpStatus.OK)
-	public String deleteTestCache(@PathVariable Long num) {
-		if (testRepository.findById(num).isEmpty()) {
-			return "없음";
-		} else {
-			testRepository.deleteById(num);
-			return "삭제 완료";
-		}
-	}
-
-	/**
-	 * 테스트 용 API - 추후 삭제
-	 */
-	@GetMapping("/redis/deleteAll")
-	@ResponseStatus(HttpStatus.OK)
-	public String deleteAllTestCache() {
-		testRepository.deleteAll();
-		return "모두 삭제";
-	}
-
-	@GetMapping("/redis/findAll")
-	@ResponseStatus(HttpStatus.OK)
-	public String findAllCache() {
-		Iterable<testCacheModel> list = testRepository.findAll();
-		StringBuilder all = new StringBuilder();
-		for (testCacheModel model : list) {
-			all.append(model.getName());
-		}
-		return all.toString();
-	}
 }

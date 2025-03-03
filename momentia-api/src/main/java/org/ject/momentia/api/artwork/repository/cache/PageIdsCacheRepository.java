@@ -1,6 +1,6 @@
 package org.ject.momentia.api.artwork.repository.cache;
 
-import org.ject.momentia.api.artwork.repository.cache.model.PageIdsCacheModel;
+import org.ject.momentia.api.artwork.model.cache.PageIdsCacheModel;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

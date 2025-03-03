@@ -17,13 +17,13 @@ public class FollowModuleService {
 
 	// returnNullIfSelf -> if문에서 사용하면 false ,
 	public Boolean isFollowing(User user, User following, boolean returnNullIfSelf) {
-		if (user == null)
+		if (user == null || following == null)
 			return false;
 		if (Objects.equals(user.getId(), following.getId()))
 			return returnNullIfSelf ? null : false;
 		return followRepository.existsById(new FollowId(following, user));
 	}
-    
+
 	public List<User> findFollowers(User user) {
 		return followRepository.findFollowingUsers(user);
 	}

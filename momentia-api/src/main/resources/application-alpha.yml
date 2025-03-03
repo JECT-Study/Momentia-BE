@@ -1,0 +1,7 @@
+server:
+  ssl:
+    enabled: true
+    key-store: ${MOMENTIA_ENV_SSL_KEY_STORE_LOCATION}
+    key-store-type: PKCS12
+    key-store-password: ${MOMENTIA_ENV_SSL_KEY_STORE_PASSWORD}
+    key-alias: ${MOMENTIA_ENV_SSL_KEY_ALIAS}

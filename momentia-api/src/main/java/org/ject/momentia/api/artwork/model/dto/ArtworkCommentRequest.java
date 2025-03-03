@@ -1,4 +1,4 @@
-package org.ject.momentia.api.artwork.model;
+package org.ject.momentia.api.artwork.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

@@ -1,4 +1,4 @@
-package org.ject.momentia.api.artwork.model;
+package org.ject.momentia.api.artwork.model.dto;
 
 import org.ject.momentia.api.mvc.annotation.EnumValue;
 import org.ject.momentia.api.mvc.annotation.NullableButNotBlank;

@@ -15,4 +15,5 @@ public class MonthlyUserConverter {
 			.profileImage(user.getProfileImage() == null ? null : user.getProfileImage().getImageSrc())
 			.build();
 	}
+
 }

@@ -1,12 +1,18 @@
 package org.ject.momentia.api.artwork.service.module;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-import org.ject.momentia.api.artwork.repository.ArtworkPostRepository;
+import org.ject.momentia.api.artwork.model.cache.ArtworkViewCacheModel;
+import org.ject.momentia.api.artwork.repository.cache.ArtworkViewCacheRepository;
+import org.ject.momentia.api.artwork.repository.cache.PageIdsCacheRepository;
+import org.ject.momentia.api.artwork.repository.jpa.ArtworkPostRepository;
 import org.ject.momentia.api.exception.ErrorCd;
 import org.ject.momentia.common.domain.artwork.ArtworkPost;
 import org.ject.momentia.common.domain.artwork.type.ArtworkPostStatus;
 import org.ject.momentia.common.domain.user.User;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
@@ -15,6 +21,9 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ArtworkPostModuleService {
 	private final ArtworkPostRepository artworkPostRepository;
+	private final PageIdsCacheRepository pageIdsCacheRepository;
+	private final RedisTemplate<String, String> redisTemplate;
+	private final ArtworkViewCacheRepository artworkViewCacheRepository;
 
 	public List<ArtworkPost> getPostsByIds(List<Long> postIds) {
 		return artworkPostRepository.findAllByIdIn(postIds);
@@ -35,5 +44,22 @@ public class ArtworkPostModuleService {
 
 	public ArtworkPost findPostByIdElseReturnNull(Long postId) {
 		return artworkPostRepository.findById(postId).orElse(null);
+	}
+
+	public Long getViewCountInCache(Long artworkPostId) {
+		ArtworkViewCacheModel artworkViewCacheModel = artworkViewCacheRepository.findById(artworkPostId)
+			.orElse(null);
+		return artworkViewCacheModel == null ? 0L : artworkViewCacheModel.getView();
+	}
+
+	public void deleteAllPageIdsCache() {
+		List<String> idList2 = Optional.ofNullable(redisTemplate.opsForSet().members("PageIdsCacheModel"))
+			.orElse(Collections.emptySet()) // null이면 빈 Set을 반환
+			.stream()
+			.map(String::valueOf)
+			.toList();
+		for (String id : idList2) {
+			pageIdsCacheRepository.deleteById(id);
+		}
 	}
 }

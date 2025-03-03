@@ -33,46 +33,24 @@ import lombok.RequiredArgsConstructor;
 public class AccountController {
 	private final AccountService accountService;
 
-	/**
-	 * 이메일 중복 검사
-	 * @param email 중복 검사를 위한 이메일
-	 * @see <a href="https://www.notion.so/dbff3ea0811a42eebfda43c5462ee2ba?pvs=4">API Docs</a>
-	 */
 	@GetMapping("/validation/email")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void validateEmail(@RequestParam @Email String email) {
 		accountService.validateEmail(email);
 	}
 
-	/**
-	 * 닉네임 중복 검사
-	 * @param nickname 중복 검사를 위한 닉네임
-	 * @see <a href="https://www.notion.so/0b7f02929b6b43dd8b828d63a81a973f?pvs=4">API Docs</a>
-	 */
 	@GetMapping("/validation/nickname")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void validateNickname(@RequestParam @Pattern(regexp = CommonConstants.NICKNAME_FORMAT) String nickname) {
 		accountService.validateNickname(nickname);
 	}
 
-	/**
-	 * 회원 가입 (일반 회원가입)
-	 * @param registerRequest 회원 가입 요청 정보
-	 * @return 인증 토큰
-	 * @see <a href="https://www.notion.so/95ec01ef32cd44f5bf93c3830f05ad96?pvs=4">API Docs</a>
-	 */
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
 	public AuthorizationToken register(@RequestBody @Valid NormalRegisterRequest registerRequest) {
 		return accountService.register(registerRequest);
 	}
 
-	/**
-	 * 소셜 로그인
-	 * @param provider OAuthProvider
-	 * @param code    OAuthProvider 가 제공한 인증 코드
-	 * @return 최초 로그인 여부 및 인증 Token 정보
-	 */
 	@GetMapping("/login/social/{provider}")
 	@ResponseStatus(HttpStatus.OK)
 	public SocialLoginResponse socialLogin(
@@ -82,25 +60,20 @@ public class AccountController {
 		return accountService.socialLogin(provider, code);
 	}
 
-	/**
-	 * 일반 로그인
-	 * @param normalLoginRequest 일반 로그인 요청 정보
-	 * @return 인증 Token 정보
-	 */
 	@PostMapping("/login/normal")
 	@ResponseStatus(HttpStatus.OK)
 	public AuthorizationToken normalLogin(@RequestBody @Valid NormalLoginRequest normalLoginRequest) {
 		return accountService.normalLogin(normalLoginRequest);
 	}
 
-	/**
-	 * AccessToken 갱신
-	 * @param refreshTokenRequest 갱신을 위한 RefreshToken
-	 * @return 갱신된 Token 정보
-	 * @see <a href="https://www.notion.so/e3139fd48c514ffdb0736f919bfcb4ff?pvs=4">API Docs</a>
-	 */
+	@PostMapping("/login/normal/test")
+	@ResponseStatus(HttpStatus.OK)
+	public AuthorizationToken normalLoginForTest(@RequestBody @Valid NormalLoginRequest normalLoginRequest) {
+		return accountService.normalLoginTest(normalLoginRequest);
+	}
+
 	@PostMapping("/refresh")
-	public AuthorizationToken refresh(@Valid RefreshTokenRequest refreshTokenRequest) {
+	public AuthorizationToken refresh(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
 		return accountService.refreshToken(refreshTokenRequest);
 	}
 }

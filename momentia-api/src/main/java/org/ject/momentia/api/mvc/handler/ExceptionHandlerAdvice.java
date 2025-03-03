@@ -10,6 +10,7 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -73,11 +74,29 @@ public class ExceptionHandlerAdvice {
 	public ResponseEntity<Response> parameterException(HttpServletRequest req, Exception e) {
 		// TODO - 세부 param 정보 제공
 		String errorMessage = null;
+		ErrorCd errorCd;
 		if (e instanceof MethodArgumentNotValidException) {
 			MethodArgumentNotValidException ex = (MethodArgumentNotValidException)e;
 			errorMessage = ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+
+			FieldError fieldError = ex.getBindingResult().getFieldErrors().get(0);
+			String field = fieldError.getField();
+
+			errorCd = switch (field) {
+				case "title" -> ErrorCd.INVALID_ARTWORK_TITLE;
+				case "artworkField" -> ErrorCd.INVALID_ARTWORK_FIELD;
+				case "explanation" -> ErrorCd.INVALID_ARTWORK_EXPLANATION;
+				case "name" -> ErrorCd.INVALID_COLLECTION_NAME;
+				case "status" -> ErrorCd.INVALID_STATUS;
+				case "content" -> ErrorCd.INVALID_COMMENT_CONTENT;
+				default -> ErrorCd.INVALID_PARAMETER;
+			};
+
+		} else {
+			errorCd = ErrorCd.INVALID_PARAMETER;
 		}
-		return handle(req, e, ErrorCd.INVALID_PARAMETER, errorMessage);
+
+		return handle(req, e, errorCd, errorMessage);
 	}
 
 	/**

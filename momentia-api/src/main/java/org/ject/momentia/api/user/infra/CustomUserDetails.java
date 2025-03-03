@@ -18,8 +18,9 @@ public class CustomUserDetails extends User {
 	private final String name;
 	private final String profileImage;
 
-	public CustomUserDetails(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities, String name, String profileImage) {
-		super(email, password != null ? password : "", true, true, true, true,
+	public CustomUserDetails(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities,
+		String name, String profileImage) {
+		super(String.valueOf(id), password != null ? password : "", true, true, true, true,
 			authorities != null ? authorities : Collections.emptyList());
 		this.id = id;
 		this.name = name;

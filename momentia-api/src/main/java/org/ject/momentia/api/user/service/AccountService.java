@@ -98,6 +98,23 @@ public class AccountService {
 		return jwtTokenProvider.createTokenInfo(user);
 	}
 
+	/**
+	 * 테스트용
+	 */
+	public AuthorizationToken normalLoginTest(NormalLoginRequest normalLoginRequest) {
+		var password = normalLoginRequest.password();
+		var user = userRepository.findByEmail(normalLoginRequest.email())
+			.orElseThrow(ErrorCd.NOT_AUTHORIZED::serviceException);
+		var normalAccount = normalAccountRepository.findById(user.getId())
+			.orElseThrow(ErrorCd.NOT_AUTHORIZED::serviceException);
+
+		if (!passwordEncoder.matches(password, normalAccount.getPassword())) {
+			throw ErrorCd.NOT_AUTHORIZED.serviceException();
+		}
+
+		return jwtTokenProvider.createTokenInfoTest(user);
+	}
+
 	public AuthorizationToken refreshToken(RefreshTokenRequest refreshTokenRequest) {
 		var refreshToken = refreshTokenRequest.refreshToken();
 		validateRefreshToken(refreshToken);
